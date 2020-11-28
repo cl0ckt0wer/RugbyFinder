@@ -1,0 +1,80 @@
+﻿@using AspNetMonsters.Blazor.Geolocation
+@using BlazorApp2.Shared
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@page "/"
+
+
+
+<h1>Welcome @myname</h1>
+
+Your GUID: @guid.ToString()
+
+<h3>You are here</h3>
+<div>
+    Lat: @location?.Latitude <br />
+    Long: @location?.Longitude <br />
+    Accuracy: @location?.Accuracy <br />
+
+</div>
+<h3>Your city info</h3>
+<div>
+    Country: @closestCity?.Country <br />
+    State: @closestCity?.Admin_name <br />
+
+    City: @closestCity?.City <br />
+
+
+</div>
+<h3>Update your name</h3>
+<p>
+    <input type="text" value=@myname @onchange="UpdateNameAsync"  />
+</p>
+<SurveyPrompt Title="How is Blazor working for you?" />
+@functions
+{
+    Location location;
+    CityInfo closestCity;
+    Guid guid;
+    string guidstring;
+    private string myname;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        location = await LocationService.GetLocationAsync();
+        guidstring = await sessionStorage.GetItemAsync<string>("guid");
+        myname = await sessionStorage.GetItemAsync<string>("name");
+        if (string.IsNullOrEmpty(guidstring))
+        {
+            guid = Guid.NewGuid();
+            await sessionStorage.SetItemAsync("guid", guid.ToString());
+            guidstring = guid.ToString();
+        }
+        else
+        {
+            if (!Guid.TryParse(guidstring, out guid))
+            {
+                guid = Guid.NewGuid();
+                await sessionStorage.SetItemAsync("guid", guid.ToString());
+                guidstring = guid.ToString();
+            }
+        }
+        var args = new CityInfoArgs();
+        args.MyGuid = guid;
+        args.Lat = (double)location.Latitude;
+        args.Lng = (double)location.Longitude;
+        var response = await Http.PostAsJsonAsync("City", args);
+        closestCity = await response.Content.ReadFromJsonAsync<CityInfo>();
+    }
+    private async Task UpdateNameAsync(ChangeEventArgs ceargs)
+    {
+        myname = ceargs.Value.ToString();
+        var args = new UpdateNameArgs();
+        args.MyName = myname;
+        args.MyGuid = guid;
+        await Http.PostAsJsonAsync("Name", args);
+        await sessionStorage.SetItemAsync("name", myname);
+    }
+}

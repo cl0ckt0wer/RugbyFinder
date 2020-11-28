@@ -1,0 +1,36 @@
+﻿@page "/users"
+@using BlazorApp2.Shared
+@using AspNetMonsters.Blazor.Geolocation
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+<h3>Players</h3>
+<ul class="list-group">
+  @foreach (var p in ruggers)
+  {
+      <App 
+      <li class="list-group-item" href="/profile/@p.guid.ToString().ToUpperInvariant()">@p.Name</li>
+  }
+</ul>
+
+
+@code {
+    private ClosestRuggers[] ruggers = new ClosestRuggers[0];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var location = await LocationService.GetLocationAsync();
+        var guidstring = await sessionStorage.GetItemAsync<string>("guid");
+
+        var myguid = Guid.Parse(guidstring);
+        var newcityinfoargs = new CityInfoArgs()
+        {
+            Lat = (double)location.Latitude,
+            Lng = (double)location.Longitude,
+            MyGuid = myguid
+        };
+        var response = await Http.PostAsJsonAsync("Ruggers", newcityinfoargs);
+        ruggers = (await response.Content.ReadFromJsonAsync<IEnumerable<ClosestRuggers>>()).ToArray();
+
+    }
+}

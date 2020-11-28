@@ -1,0 +1,15 @@
+﻿@using AspNetMonsters.Blazor.Geolocation
+@using BlazorApp2.Shared
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@page "/profile/{id:guid}"
+
+<h3>Profile</h3>
+Name 
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+}
