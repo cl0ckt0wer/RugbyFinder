@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace BlazorApp2.Shared
 {
     public class Ruggers
     {
-        public Ruggers ()
+        public Ruggers()
         {
             ClosestUsers = new List<Rugger>();
         }

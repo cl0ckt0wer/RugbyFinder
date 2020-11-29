@@ -16,6 +16,7 @@ BEGIN
     -- Insert statements for procedure here
 	exec Proc_UpsertRuggerLocation @geo, @ui
 
+	
 	SELECT TOP(1) Country, admin_name, city, Coordinates.STDistance(@geo) as StDistance
 	FROM Cities
 	WHERE Coordinates.STDistance(@geo) IS NOT NULL  

@@ -5,12 +5,19 @@
 @inject HttpClient Http
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 <h3>Players</h3>
-<ul class="list-group">
-  @foreach (var p in ruggers)
-  {
-      <App 
-      <li class="list-group-item" href="/profile/@p.guid.ToString().ToUpperInvariant()">@p.Name</li>
-  }
+<ul class="list-unstyled">
+    @foreach (var p in ruggers)
+    {
+        <li class="media">
+            <img class="mr-3" src"..." alt="GPI" />
+            <div class="media-body">
+           
+                <a href="/Profile/@p.guid">@p.Name</a>
+                @p.Bio
+             
+            </div>
+        </li>
+    }
 </ul>
 
 

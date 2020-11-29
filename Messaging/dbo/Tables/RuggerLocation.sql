@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[RuggerLocation] (
 	[Id] UNIQUEIDENTIFIER NOT NULL, 
 	[Coordinate] [sys].[geography] NULL, 
-	[RefreshDate] DATETIME2 (7) NULL, 
+	[RefreshDate] DATETIME2 (7) NOT NULL DEFAULT SYSDATETIME()
 	PRIMARY KEY CLUSTERED([Id] ASC)
 ); 
 GO; 

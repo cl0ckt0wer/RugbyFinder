@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlazorApp2.Shared
 {
@@ -11,5 +7,6 @@ namespace BlazorApp2.Shared
         public string Name { get; set; }
         public int LocationOrder { get; set; }
         public Guid guid { get; set; }
+        public string Bio { get; set; }
     }
 }
