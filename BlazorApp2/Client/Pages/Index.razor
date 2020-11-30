@@ -11,6 +11,7 @@
 <p>
     Your Bio: @myInfo.MyBio
 </p>
+    <h1>@debug</h1>
     <h3>You are here</h3>
     <div>
         Lat: @location?.Latitude <br />
@@ -59,7 +60,7 @@
         //IndexModel indexModel = new IndexModel() { MyBio = string.Empty, MyName = string.Empty };
         //TeamModel teamModel = new TeamModel();
         MyInfo myInfo = new MyInfo() { MyBio = string.Empty, TeamId = Guid.Empty, TeamName = string.Empty, MyName = string.Empty };
-
+        string debug = "Loading...";
 
         protected override async Task OnInitializedAsync()
         {
@@ -92,7 +93,7 @@
             closestCity = await response.Content.ReadFromJsonAsync<CityInfo>();
             //indexModel.MyBio = inforesponse.MyBio;
             //indexModel.MyName = inforesponse.MyName;
-
+            debug = "Loading Compelete!";
 
         }
         private async Task UpdateNameAsync()
