@@ -17,7 +17,7 @@ BEGIN
 	exec Proc_UpsertRuggerLocation @geo, @ui
 
 	
-	SELECT TOP(1) Country, admin_name, city, Coordinates.STDistance(@geo) as StDistance
+	SELECT TOP(1) Country, admin_name, city, Coordinates.STDistance(@geo) as StDistance, id as CityId
 	FROM Cities
 	WHERE Coordinates.STDistance(@geo) IS NOT NULL  
 	ORDER BY Coordinates.STDistance(@geo);  

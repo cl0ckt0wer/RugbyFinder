@@ -3,6 +3,8 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SqlServer.Types;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -35,6 +37,17 @@ namespace BlazorApp2.Server.Controllers
                 return city;
             }
 
+        }
+        [HttpGet]
+        [Route("{myguid:guid}")]
+        public async Task<IEnumerable<CityInfo>> GetCityAsync(Guid myguid)
+        {
+            var sql = "Proc_GetClosestCitiesByRugger";
+            using (var conn = new SqlConnection(_cstring.ConnectionString))
+            {
+                var test = await conn.QueryAsync<CityInfo>(sql, param: new { myguid = myguid }, commandType: CommandType.StoredProcedure);
+                return test;
+            }
         }
     }
 }

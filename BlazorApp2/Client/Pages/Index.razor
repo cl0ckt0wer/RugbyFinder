@@ -1,6 +1,5 @@
 ﻿@using AspNetMonsters.Blazor.Geolocation
 @using BlazorApp2.Shared
-@using Models
 @inject LocationService  LocationService
 @inject HttpClient Http
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
@@ -8,93 +7,102 @@
 
 
 
-<h1>Welcome @indexModel.MyName</h1>
+<h1>Welcome @myInfo.MyName</h1>
+<p>
+    Your Bio: @myInfo.MyBio
+</p>
+    <h3>You are here</h3>
+    <div>
+        Lat: @location?.Latitude <br />
+        Long: @location?.Longitude <br />
+        Accuracy: @location?.Accuracy <br />
 
-Your GUID: @guidstring
-
-<h3>You are here</h3>
-<div>
-    Lat: @location?.Latitude <br />
-    Long: @location?.Longitude <br />
-    Accuracy: @location?.Accuracy <br />
-
-</div>
-<h3>Your city info</h3>
-<div>
-    Country: @closestCity?.Country <br />
-    State: @closestCity?.Admin_name <br />
-
-    City: @closestCity?.City <br />
-
-
-</div>
-
-<EditForm Model="@indexModel" OnValidSubmit="@UpdateNameAsync">
-
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div class="form-group">
-        <label for="name">Change your name</label>
-        <InputText class="form-control" id="name" @bind-Value="@indexModel.MyName" />
     </div>
-    <div class="form-group">
-        <label for="bio">Change your bio</label>
-        <InputTextArea class="form-control" id="bio" @bind-Value="@indexModel.MyBio" />
+    <h3>Your city info</h3>
+    <div>
+        Country: @closestCity?.Country <br />
+        State: @closestCity?.Admin_name <br />
+        City: @closestCity?.City <br />
+        My Team: @myInfo.TeamName <br />
+
     </div>
-    <button class="btn btn-primary" type="submit">Submit</button>
+    <div>
+        <a class="btn btn-primary" href="/teampicker" role="button">Pick a Team</a>
 
-</EditForm>
+    </div>
+
+    <EditForm Model="@myInfo" OnValidSubmit="@UpdateNameAsync">
+
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+            <label for="name">Change your name</label>
+            <InputText class="form-control" id="name" @bind-Value="@myInfo.MyName" />
+        </div>
+        <div class="form-group">
+            <label for="bio">Change your bio</label>
+            <InputTextArea class="form-control" id="bio" @bind-Value="@myInfo.MyBio" />
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+
+    </EditForm>
 
 
 
-@functions
+
+    @functions
 {
-    Location location;
-    CityInfo closestCity;
-    Guid guid = Guid.Empty;
-    string guidstring = string.Empty;
-    IndexModel indexModel = new IndexModel() { MyBio = string.Empty, MyName = string.Empty };
+        Location location;
+        CityInfo closestCity;
+        Guid guid = Guid.Empty;
+        string guidstring = string.Empty;
+        //IndexModel indexModel = new IndexModel() { MyBio = string.Empty, MyName = string.Empty };
+        //TeamModel teamModel = new TeamModel();
+        MyInfo myInfo = new MyInfo() { MyBio = string.Empty, TeamId = Guid.Empty, TeamName = string.Empty, MyName = string.Empty };
 
 
-    protected override async Task OnInitializedAsync()
-    {
-
-        location = await LocationService.GetLocationAsync();
-        guidstring = await sessionStorage.GetItemAsync<string>("guid");
-        if (string.IsNullOrEmpty(guidstring))
+        protected override async Task OnInitializedAsync()
         {
-            guid = Guid.NewGuid();
-            await sessionStorage.SetItemAsync("guid", guid.ToString());
-            guidstring = guid.ToString();
-        }
-        else
-        {
-            if (!Guid.TryParse(guidstring, out guid))
+#if DEBUG
+            await Task.Delay(5000);
+#endif
+            location = await LocationService.GetLocationAsync();
+            guidstring = await sessionStorage.GetItemAsync<string>("guid");
+            if (string.IsNullOrEmpty(guidstring))
             {
                 guid = Guid.NewGuid();
                 await sessionStorage.SetItemAsync("guid", guid.ToString());
                 guidstring = guid.ToString();
             }
+            else
+            {
+                if (!Guid.TryParse(guidstring, out guid))
+                {
+                    guid = Guid.NewGuid();
+                    await sessionStorage.SetItemAsync("guid", guid.ToString());
+                    guidstring = guid.ToString();
+                }
+            }
+            var args = new CityInfoArgs();
+            args.MyGuid = guid;
+            args.Lat = (double)location.Latitude;
+            args.Lng = (double)location.Longitude;
+            var response = await Http.PostAsJsonAsync("City", args);
+            myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
+            closestCity = await response.Content.ReadFromJsonAsync<CityInfo>();
+            //indexModel.MyBio = inforesponse.MyBio;
+            //indexModel.MyName = inforesponse.MyName;
+
+
         }
-        var args = new CityInfoArgs();
-        args.MyGuid = guid;
-        args.Lat = (double)location.Latitude;
-        args.Lng = (double)location.Longitude;
-        var response = await Http.PostAsJsonAsync("City", args);
-        var inforesponse = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
-        closestCity = await response.Content.ReadFromJsonAsync<CityInfo>();
-        indexModel.MyBio = inforesponse.MyBio;
-        indexModel.MyName = inforesponse.MyName;
+        private async Task UpdateNameAsync()
+        {
+
+            var args = new UpdateRuggerArgs();
+            args.MyName = myInfo.MyName;
+            args.MyGuid = guid;
+            args.Bio = myInfo.MyBio;
+            await Http.PostAsJsonAsync("Name", args);
+        }
 
     }
-    private async Task UpdateNameAsync()
-    {
-
-        var args = new UpdateRuggerArgs();
-        args.MyName = indexModel.MyName;
-        args.MyGuid = guid;
-        args.Bio = indexModel.MyBio;
-        await Http.PostAsJsonAsync("Name", args);
-    }
-
-}

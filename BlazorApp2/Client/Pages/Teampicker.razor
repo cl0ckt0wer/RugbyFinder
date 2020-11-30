@@ -1,0 +1,47 @@
+﻿
+@using BlazorApp2.Shared
+@page "/teampicker"
+@inject HttpClient Http
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject NavigationManager NavigationManager
+
+<div class="container">
+    <h3>Teampicker</h3>
+    <EditForm Model="@selectedTeam" OnValidSubmit="@UpdateTeam">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <label for="selectteam">
+            Select Your Team:
+            <InputSelect id="selectteam" class="custom-select" @bind-Value="selectedTeam">
+                @foreach (var t in closestTeams)
+                {
+                    <option value="@t.TeamId">@t.TeamName</option>
+                }
+            </InputSelect>
+        </label>
+        <button disabled="@buttondisabled" class="btn btn-primary" type="submit">Submit</button>
+
+    </EditForm>
+</div>
+
+
+@code {
+    MyInfo myInfo = new MyInfo() { MyBio = string.Empty, TeamId = Guid.Empty, TeamName = string.Empty, MyName = string.Empty };
+    string guidstring = string.Empty;
+    IEnumerable<TeamModel> closestTeams = new TeamModel[0];
+    Guid selectedTeam = Guid.Empty;
+    bool buttondisabled = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        guidstring = await sessionStorage.GetItemAsync<string>("guid");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guidstring}");
+        closestTeams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"Teams/{guidstring}");
+        buttondisabled = false;
+    }
+    async Task UpdateTeam()
+    {
+        await Http.PostAsJsonAsync("/ruggerteam", new RuggerTeamArgs() { RuggerId = Guid.Parse(guidstring), TeamId = selectedTeam });
+        NavigationManager.NavigateTo("/");
+    }
+}

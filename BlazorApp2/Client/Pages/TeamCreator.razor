@@ -1,0 +1,42 @@
+﻿@using BlazorApp2.Shared
+@page "/teamcreator"
+@inject HttpClient Http
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject NavigationManager NavigationManager
+<h3>TeamCreator</h3>
+
+<EditForm Model="@teamModel" OnValidSubmit="@CreateTeamAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <label for="name">Team Name</label>
+    <InputText class="form-control" id="name" @bind-Value="teamModel.TeamName" />
+    <label for="bio">Team Bio</label>
+    <InputTextArea class="form-control" id="bio" @bind-Value="teamModel.TeamBio" />
+    <label for="city">City</label>
+    <InputSelect class="form-control" id="city" @bind-Value="teamModel.TeamCityId">
+        @foreach (var c in cityInfos)
+        {
+            <option value="@c.CityId">@c.City</option>
+        }
+    </InputSelect>
+    <button class="button button-primary form-control" type="submit">Submit</button>
+</EditForm>
+
+@code {
+    string guidstring = string.Empty;
+    TeamPutModel teamModel = new TeamPutModel();
+    IEnumerable<CityInfo> cityInfos = new CityInfo[0];
+
+    protected override async Task OnInitializedAsync()
+    {
+        guidstring = await sessionStorage.GetItemAsync<string>("guid");
+        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
+    }
+    async Task CreateTeamAsync()
+    {
+        teamModel.TeamId = Guid.NewGuid();
+        teamModel.RuggerOwner = Guid.Parse(guidstring);
+        await Http.PostAsJsonAsync("/teams", teamModel);
+        NavigationManager.NavigateTo("/teampicker");
+    }
+}

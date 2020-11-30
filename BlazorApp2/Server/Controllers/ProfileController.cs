@@ -25,7 +25,7 @@ namespace BlazorApp2.Server.Controllers
         }
         [HttpGet]
         [Route("{myguid:guid}")]
-        public async Task<ProfileInfo> NameAsync(Guid myguid)
+        public async Task<ProfileInfo> GetProfileAsync(Guid myguid)
         {
             var sql = "Proc_GetProfileInfo";
             using (SqlConnection cnn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
