@@ -1,12 +1,26 @@
-﻿@using AspNetMonsters.Blazor.Geolocation
-@using BlazorApp2.Shared
+﻿@using BlazorApp2.Shared
+@using AspNetMonsters.Blazor.Geolocation
 @inject LocationService  LocationService
 @inject HttpClient Http
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @page "/teams"
 <h3>Teams</h3>
+@foreach (var p in teams)
+{
+    <li class="media">
+        <img class="mr-3" src"..." alt="GPI" />
+        <div class="media-body">
+            
+            <a href="/TeamProfile/@p.TeamId">@p.TeamName</a>
+            <h3>@p.City.City</h3>
+            @p.TeamBio
 
+        </div>
+    </li>
+}
 
 @code {
+    IEnumerable<TeamModel> teams = new TeamModel[0];
+
 
 }

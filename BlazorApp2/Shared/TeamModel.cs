@@ -12,5 +12,6 @@ namespace BlazorApp2.Shared
         public string TeamBio { get; set; } = string.Empty;
         public int TeamCityId { get; set; } = 0;
         public Guid TeamId { get; set; } = Guid.Empty;
+        public CityInfo City { get; set; } = new CityInfo();
     }
 }
