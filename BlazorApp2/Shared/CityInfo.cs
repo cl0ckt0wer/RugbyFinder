@@ -2,11 +2,11 @@
 {
     public class CityInfo
     {
-        public string Country { get; set; }
-        public string Admin_name { get; set; }
-        public string City { get; set; }
-        public float Distance { get; set; }
-        public int CityId { get; set; }
+        public string Country { get; set; } = string.Empty;
+        public string Admin_name { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public float Distance { get; set; } = 0F;
+        public int CityId { get; set; } = 0;
 
     }
 }

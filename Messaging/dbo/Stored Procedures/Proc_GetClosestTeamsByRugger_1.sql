@@ -8,7 +8,7 @@ BEGIN
 	WHERE R.Id = @myguid;
 
 	 	WITH CTE AS (
-		SELECT TOP(100) T.id as TeamId ,T.TeamName, T.TeamBio, t.TeamCityId, c.id as CityId
+		SELECT TOP(100) T.Id as TeamId ,T.TeamName, T.TeamBio, t.TeamCityId, c.id as CityId
 			,C.country, c.admin_name, c.city, c.Coordinates.STDistance(@geo) as Distance
 		/*, ROW_NUMBER() OVER (ORDER BY C.Coordinates.STDistance(@geo)) AS LOCATIONORDER*/
 		FROM Teams T

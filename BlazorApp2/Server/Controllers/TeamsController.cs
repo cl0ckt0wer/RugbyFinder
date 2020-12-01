@@ -22,27 +22,27 @@ namespace BlazorApp2.Server.Controllers
         {
             sqlConnectionStringBuilder = new SqlConnectionStringBuilder(configuration.GetConnectionString("MessagingDatabase"));
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
-        [HttpGet]
-        [Route("{myguid:guid}")]
+        //public IActionResult Index()
+        //{
+        //    return View();
+        //}
+        [HttpGet("{myguid:guid}")]
         public async Task<IEnumerable<TeamModel>> TeamsAsync(Guid myguid)
         {
             var sql = "Proc_GetClosestTeamsByRugger";
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {
                 return await conn.QueryAsync<TeamModel, CityInfo, TeamModel>(sql
-                    ,(teamModel, cityInfo) =>
-                    {
-                        teamModel.City = cityInfo;
-                        return teamModel;
-                    }, splitOn: "CityId" 
+                    , (teamModel, cityInfo) =>
+                     {
+                         teamModel.City = cityInfo;
+                         return teamModel;
+                     }, splitOn: "CityId"
                     , param: new { myguid }
                     , commandType: CommandType.StoredProcedure);
             }
         }
+       
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -73,7 +73,7 @@ namespace BlazorApp2.Server.Controllers
 
             }
             return Ok();
-            
+
         }
 
     }
