@@ -7,10 +7,10 @@ AS
 	, c.City
 	, T.TeamName
 	, T.ID AS [MyTeamId]
-	FROM DBO.RuggerName RN 
-	LEFT JOIN DBO.RuggerLocation RL ON RL.Id = RN.Id
-	LEFT JOIN DBO.Cities C ON C.id = dbo.sfn_GetClosestCityId(rl.Coordinate)
-	LEFT JOIN DBO.RuggerTeam RT ON RT.RuggerId = RN.Id
-	LEFT JOIN DBO.Teams T ON T.ID = RT.TeamId
+	FROM dbo.RuggerName RN 
+	LEFT JOIN dbo.RuggerLocation RL ON RL.Id = RN.Id
+	LEFT JOIN dbo.Cities C ON C.id = dbo.sfn_GetClosestCityId(rl.Coordinate)
+	LEFT JOIN dbo.RuggerTeam RT ON RT.RuggerId = RN.Id
+	LEFT JOIN dbo.Teams T ON T.ID = RT.TeamId
 	WHERE RN.Id = @guid
 RETURN 1

@@ -33,7 +33,14 @@ namespace BlazorApp2.Server.Controllers
             var sql = "Proc_GetClosestTeamsByRugger";
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {
-                return await conn.QueryAsync<TeamModel>(sql, param: new { myguid = myguid }, commandType: CommandType.StoredProcedure);
+                return await conn.QueryAsync<TeamModel, CityInfo, TeamModel>(sql
+                    ,(teamModel, cityInfo) =>
+                    {
+                        teamModel.City = cityInfo;
+                        return teamModel;
+                    }, splitOn: "CityId" 
+                    , param: new { myguid }
+                    , commandType: CommandType.StoredProcedure);
             }
         }
         [HttpPost]

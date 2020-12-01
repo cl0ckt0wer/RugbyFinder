@@ -13,6 +13,7 @@
         <label for="selectteam">
             Select Your Team:
             <InputSelect id="selectteam" class="custom-select" @bind-Value="selectedTeam">
+                <option selected>Pick a Team</option>
                 @foreach (var t in closestTeams)
                 {
                     <option value="@t.TeamId">@t.TeamName</option>
