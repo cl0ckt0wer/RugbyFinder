@@ -12,14 +12,15 @@
         <ValidationSummary />
         <label for="selectteam">
             Select Your Team:
-            <InputSelect id="selectteam" class="custom-select" @bind-Value="selectedTeam">
-                <option selected>Pick a Team</option>
+        </label>
+            <InputSelect id="selectteam" class="form-control" @bind-Value="selectedTeam">
+                <option>Pick a Team</option>
                 @foreach (var t in closestTeams)
                 {
                     <option value="@t.TeamId">@t.TeamName</option>
                 }
             </InputSelect>
-        </label>
+       
         <button disabled="@buttondisabled" class="btn btn-primary" type="submit">Submit</button>
 
     </EditForm>

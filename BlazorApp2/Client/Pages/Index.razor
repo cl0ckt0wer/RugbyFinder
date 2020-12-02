@@ -6,11 +6,13 @@
 @page "/"
 
 
-
-<h1>Welcome @myInfo.MyName</h1>
-<p>
-    Your Bio: @myInfo.MyBio
-</p>
+@if (debug)
+{
+    <h1>Welcome @myInfo.MyName</h1>
+    <img id="profilepic" src="@imageDataUri" />
+    <p>
+        Your Bio: @myInfo.MyBio
+    </p>
     <h1>@debug</h1>
     <h3>You are here</h3>
     <div>
@@ -47,63 +49,87 @@
         <button class="btn btn-primary" type="submit">Submit</button>
 
     </EditForm>
+    <div class="form-group">
+
+        <label for="selectpic">Select a Profile Picture</label>
+        <InputFile class="form-control-file" id="selectpic" OnChange="@OnInputFileChange" />
+    </div>
+}
+else
+{ <h1>Loading...</h1>}
 
 
 
 
-    @functions
+@functions
 {
-        Location location;
-        CityInfo closestCity;
-        Guid guid = Guid.Empty;
-        string guidstring = string.Empty;
-        //IndexModel indexModel = new IndexModel() { MyBio = string.Empty, MyName = string.Empty };
-        //TeamModel teamModel = new TeamModel();
-        MyInfo myInfo = new MyInfo() { MyBio = string.Empty, TeamId = Guid.Empty, TeamName = string.Empty, MyName = string.Empty };
-        string debug = "Loading...";
-
-        protected override async Task OnInitializedAsync()
-        {
+    Location location;
+    CityInfo closestCity;
+    Guid guid = Guid.Empty;
+    string guidstring = string.Empty;
+    //IndexModel indexModel = new IndexModel() { MyBio = string.Empty, MyName = string.Empty };
+    //TeamModel teamModel = new TeamModel();
+    MyInfo myInfo = new MyInfo() { MyBio = string.Empty, TeamId = Guid.Empty, TeamName = string.Empty, MyName = string.Empty };
+    bool debug = false;
+    string imageDataUri = "";
+    string format = "image/png";
+    protected override async Task OnInitializedAsync()
+    {
 #if DEBUG
-            await Task.Delay(5000);
+        //await Task.Delay(5000);
 #endif
-            location = await LocationService.GetLocationAsync();
-            guidstring = await sessionStorage.GetItemAsync<string>("guid");
-            if (string.IsNullOrEmpty(guidstring))
+        location = await LocationService.GetLocationAsync();
+        guidstring = await sessionStorage.GetItemAsync<string>("guid");
+        if (string.IsNullOrEmpty(guidstring))
+        {
+            guid = Guid.NewGuid();
+            await sessionStorage.SetItemAsync("guid", guid.ToString());
+            guidstring = guid.ToString();
+        }
+        else
+        {
+            if (!Guid.TryParse(guidstring, out guid))
             {
                 guid = Guid.NewGuid();
                 await sessionStorage.SetItemAsync("guid", guid.ToString());
                 guidstring = guid.ToString();
             }
-            else
-            {
-                if (!Guid.TryParse(guidstring, out guid))
-                {
-                    guid = Guid.NewGuid();
-                    await sessionStorage.SetItemAsync("guid", guid.ToString());
-                    guidstring = guid.ToString();
-                }
-            }
-            var args = new CityInfoArgs();
-            args.MyGuid = guid;
-            args.Lat = (double)location.Latitude;
-            args.Lng = (double)location.Longitude;
-            var response = await Http.PostAsJsonAsync("City", args);
-            myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
-            closestCity = await response.Content.ReadFromJsonAsync<CityInfo>();
-            //indexModel.MyBio = inforesponse.MyBio;
-            //indexModel.MyName = inforesponse.MyName;
-            debug = "Loading Compelete!";
-
         }
-        private async Task UpdateNameAsync()
+        var args = new CityInfoArgs();
+        args.MyGuid = guid;
+        args.Lat = (double)location.Latitude;
+        args.Lng = (double)location.Longitude;
+        var response = await Http.PostAsJsonAsync("City", args);
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
+        closestCity = await response.Content.ReadFromJsonAsync<CityInfo>();
+        if(myInfo.ProfilePic != null && myInfo.ProfilePic.Length > 0)
         {
-
-            var args = new UpdateRuggerArgs();
-            args.MyName = myInfo.MyName;
-            args.MyGuid = guid;
-            args.Bio = myInfo.MyBio;
-            await Http.PostAsJsonAsync("Name", args);
+            imageDataUri = $"data:{format};base64,{Convert.ToBase64String(myInfo.ProfilePic)}";
         }
+        debug = true;
+
 
     }
+    private async Task UpdateNameAsync()
+    {
+
+        var args = new UpdateRuggerArgs();
+        args.MyName = myInfo.MyName;
+        args.MyGuid = guid;
+        args.Bio = myInfo.MyBio;
+        await Http.PostAsJsonAsync("Name", args);
+    }
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+
+        var browserFile = await e.File.RequestImageFileAsync(format, 300, 300);
+        using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
+        var buffer = new byte[stream.Length];
+        await stream.ReadAsync(buffer);
+        var args = new RuggerPic() { Pic = buffer, RuggerId = guid };
+
+        await Http.PostAsJsonAsync("RuggerPic", args);
+        imageDataUri = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+    }
+
+}
