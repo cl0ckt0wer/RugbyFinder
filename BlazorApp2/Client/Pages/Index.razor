@@ -2,7 +2,10 @@
 @using BlazorApp2.Shared
 @inject LocationService  LocationService
 @inject HttpClient Http
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+
 @page "/"
 
 
@@ -15,24 +18,27 @@
     </p>
     <h1>@debug</h1>
     <h3>You are here</h3>
-    <div>
+    <div class="container">
         Lat: @location?.Latitude <br />
         Long: @location?.Longitude <br />
         Accuracy: @location?.Accuracy <br />
 
     </div>
     <h3>Your city info</h3>
-    <div>
+    <div class="container">
         Country: @closestCity?.Country <br />
         State: @closestCity?.Admin_name <br />
         City: @closestCity?.City <br />
         My Team: @myInfo.TeamName <br />
 
     </div>
-    <div>
-        <a class="btn btn-primary" href="/teampicker" role="button">Pick a Team</a>
-
+    <div class="container">
+        <button @onclick="PickATeam" class="btn btn-primary" href="/teampicker" role="button" disabled="@teambuttondisabled">Pick a Team</button>
     </div>
+
+
+
+
 
     <EditForm Model="@myInfo" OnValidSubmit="@UpdateNameAsync">
 
@@ -73,17 +79,18 @@ else
     bool debug = false;
     string imageDataUri = "";
     string format = "image/png";
+    bool teambuttondisabled = true;
     protected override async Task OnInitializedAsync()
     {
 #if DEBUG
-        //await Task.Delay(5000);
+        await Task.Delay(5000);
 #endif
         location = await LocationService.GetLocationAsync();
-        guidstring = await sessionStorage.GetItemAsync<string>("guid");
+        guidstring = await localStorage.GetItemAsync<string>("guid");
         if (string.IsNullOrEmpty(guidstring))
         {
             guid = Guid.NewGuid();
-            await sessionStorage.SetItemAsync("guid", guid.ToString());
+            await localStorage.SetItemAsync("guid", guid.ToString());
             guidstring = guid.ToString();
         }
         else
@@ -91,7 +98,7 @@ else
             if (!Guid.TryParse(guidstring, out guid))
             {
                 guid = Guid.NewGuid();
-                await sessionStorage.SetItemAsync("guid", guid.ToString());
+                await localStorage.SetItemAsync("guid", guid.ToString());
                 guidstring = guid.ToString();
             }
         }
@@ -101,8 +108,12 @@ else
         args.Lng = (double)location.Longitude;
         var response = await Http.PostAsJsonAsync("City", args);
         myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
+        if (!string.IsNullOrEmpty(myInfo.MyName))
+        {
+            teambuttondisabled = false;
+        }
         closestCity = await response.Content.ReadFromJsonAsync<CityInfo>();
-        if(myInfo.ProfilePic != null && myInfo.ProfilePic.Length > 0)
+        if (myInfo.ProfilePic != null && myInfo.ProfilePic.Length > 0)
         {
             imageDataUri = $"data:{format};base64,{Convert.ToBase64String(myInfo.ProfilePic)}";
         }
@@ -112,12 +123,17 @@ else
     }
     private async Task UpdateNameAsync()
     {
+        if (!string.IsNullOrEmpty(myInfo.MyName))
+        {
+            var args = new UpdateRuggerArgs();
+            args.MyName = myInfo.MyName;
+            args.MyGuid = guid;
+            args.Bio = myInfo.MyBio;
+            await Http.PostAsJsonAsync("Name", args);
+            teambuttondisabled = false;
+        }
 
-        var args = new UpdateRuggerArgs();
-        args.MyName = myInfo.MyName;
-        args.MyGuid = guid;
-        args.Bio = myInfo.MyBio;
-        await Http.PostAsJsonAsync("Name", args);
+
     }
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
@@ -130,6 +146,10 @@ else
 
         await Http.PostAsJsonAsync("RuggerPic", args);
         imageDataUri = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+    }
+    private void PickATeam()
+    {
+        NavigationManager.NavigateTo("/teampicker");
     }
 
 }

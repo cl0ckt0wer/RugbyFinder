@@ -9,9 +9,9 @@
     [admin_name]  NVARCHAR (2000)   NULL,
     [capital]     NVARCHAR (2000)   NULL,
     [population]  NVARCHAR (2000)   NULL,
-    [id]          INT               NOT NULL,
+    [Id]          INT               NOT NULL,
     [Coordinates] [sys].[geography] NULL,
-    PRIMARY KEY CLUSTERED ([id] ASC)
+    PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
 

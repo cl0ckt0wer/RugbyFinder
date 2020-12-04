@@ -1,4 +1,5 @@
 using AspNetMonsters.Blazor.Geolocation;
+using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ namespace BlazorApp2.Client
             builder.Services.AddScoped<LocationService>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddBlazoredSessionStorage();
+            builder.Services.AddBlazoredLocalStorage();
             await builder.Build().RunAsync();
         }
     }

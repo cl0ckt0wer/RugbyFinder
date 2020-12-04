@@ -3,7 +3,7 @@
 @using AspNetMonsters.Blazor.Geolocation
 @inject LocationService  LocationService
 @inject HttpClient Http
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 <h3>Players</h3>
 <ul class="list-unstyled">
     @foreach (var p in ruggers)
@@ -11,10 +11,10 @@
         <li class="media">
             <img class="mr-3" src"..." alt="GPI" />
             <div class="media-body">
-           
+
                 <a href="/Profile/@p.guid">@p.Name</a>
                 @p.Bio
-             
+
             </div>
         </li>
     }
@@ -27,7 +27,7 @@
     protected override async Task OnInitializedAsync()
     {
         var location = await LocationService.GetLocationAsync();
-        var guidstring = await sessionStorage.GetItemAsync<string>("guid");
+        var guidstring = await localStorage.GetItemAsync<string>("guid");
 
         var myguid = Guid.Parse(guidstring);
         var newcityinfoargs = new CityInfoArgs()

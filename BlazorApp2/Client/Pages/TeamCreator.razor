@@ -1,8 +1,9 @@
 ﻿@using BlazorApp2.Shared
 @page "/teamcreator"
 @inject HttpClient Http
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
 <h3>TeamCreator</h3>
 
 <EditForm Model="@teamModel" OnValidSubmit="@CreateTeamAsync">
@@ -24,13 +25,13 @@
 </EditForm>
 
 @code {
-        string guidstring = string.Empty;
-        TeamPutModel teamModel = new TeamPutModel();
-        IEnumerable<CityInfo> cityInfos = new CityInfo[0];
+    string guidstring = string.Empty;
+    TeamPutModel teamModel = new TeamPutModel();
+    IEnumerable<CityInfo> cityInfos = new CityInfo[0];
 
     protected override async Task OnInitializedAsync()
     {
-        guidstring = await sessionStorage.GetItemAsync<string>("guid");
+        guidstring = await localStorage.GetItemAsync<string>("guid");
         cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
     }
     async Task CreateTeamAsync()

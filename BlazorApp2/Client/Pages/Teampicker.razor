@@ -2,8 +2,9 @@
 @using BlazorApp2.Shared
 @page "/teampicker"
 @inject HttpClient Http
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
 
 <div class="container">
     <h3>Teampicker</h3>
@@ -13,14 +14,14 @@
         <label for="selectteam">
             Select Your Team:
         </label>
-            <InputSelect id="selectteam" class="form-control" @bind-Value="selectedTeam">
-                <option>Pick a Team</option>
-                @foreach (var t in closestTeams)
-                {
-                    <option value="@t.TeamId">@t.TeamName</option>
-                }
-            </InputSelect>
-       
+        <InputSelect id="selectteam" class="form-control" @bind-Value="selectedTeam">
+            <option value="@Guid.Empty" selected>@PickATeam</option>
+            @foreach (var t in closestTeams)
+            {
+                <option value="@t.TeamId">@t.TeamName</option>
+            }
+        </InputSelect>
+
         <button disabled="@buttondisabled" class="btn btn-primary" type="submit">Submit</button>
 
     </EditForm>
@@ -33,17 +34,27 @@
     IEnumerable<TeamModel> closestTeams = new TeamModel[0];
     Guid selectedTeam = Guid.Empty;
     bool buttondisabled = true;
+    public string PickATeam { get; set; } = "Pick a Team";
 
     protected override async Task OnInitializedAsync()
     {
-        guidstring = await sessionStorage.GetItemAsync<string>("guid");
+        guidstring = await localStorage.GetItemAsync<string>("guid");
         myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guidstring}");
+        if (string.IsNullOrEmpty(myInfo.MyName))
+        {
+            NavigationManager.NavigateTo("/");
+        }
         closestTeams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"Teams/{guidstring}");
         buttondisabled = false;
     }
     async Task UpdateTeam()
     {
-        await Http.PostAsJsonAsync("/ruggerteam", new RuggerTeamArgs() { RuggerId = Guid.Parse(guidstring), TeamId = selectedTeam });
+        if (selectedTeam != Guid.Empty)
+        {
+            await Http.PostAsJsonAsync("/ruggerteam", new RuggerTeamArgs() { RuggerId = Guid.Parse(guidstring), TeamId = selectedTeam });
+
+        }
         NavigationManager.NavigateTo("/");
+
     }
 }

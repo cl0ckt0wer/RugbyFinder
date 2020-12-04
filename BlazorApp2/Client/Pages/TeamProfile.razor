@@ -2,11 +2,10 @@
 @using BlazorApp2.Shared
 @inject LocationService  LocationService
 @inject HttpClient Http
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @page "/teamprofile/{id:guid}"
 <h3>TeamProfile</h3>
 <div class="card" style="width: 18rem;">
-    
+
     <div class="card-body">
         <h5 class="card-title">@tm?.TeamName</h5>
         <h6>@tm?.City.City, @tm?.City.Admin_name, @tm?.City.Country</h6>

@@ -2,7 +2,7 @@
 @using AspNetMonsters.Blazor.Geolocation
 @inject LocationService  LocationService
 @inject HttpClient Http
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager MyNavigationManager
 
 @page "/teams"
@@ -30,7 +30,7 @@
     string guidstring = string.Empty;
     protected override async Task OnInitializedAsync()
     {
-        var guidstring = await sessionStorage.GetItemAsync<string>("guid");
+        var guidstring = await localStorage.GetItemAsync<string>("guid");
         teams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"teams/{guidstring}");
     }
 }

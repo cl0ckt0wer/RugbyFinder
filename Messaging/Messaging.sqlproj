@@ -65,6 +65,7 @@
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="dbo\Functions\" />
+    <Folder Include="Storage\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\worldcities.sql" />
@@ -86,8 +87,15 @@
     <Build Include="dbo\Stored Procedures\Proc_GetClosestTeamsByRugger_1.sql" />
     <Build Include="dbo\Stored Procedures\Proc_GetClosestCitiesByRugger_1.sql" />
     <Build Include="dbo\Stored Procedures\GetTeamInfo_1.sql" />
+    <Build Include="dbo\Tables\RuggerPic_1.sql" />
+    <Build Include="Storage\FS1.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_UpsertRuggerPic_1.sql" />
+    <Build Include="dbo\Stored Procedures\Get_TeamProfileInfo_1.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Messaging.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Messaging.refactorlog" />
   </ItemGroup>
 </Project>

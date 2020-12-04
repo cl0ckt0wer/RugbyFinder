@@ -2,7 +2,7 @@
 @using BlazorApp2.Shared
 @inject LocationService  LocationService
 @inject HttpClient Http
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
 @page "/profile/{id:guid}"
 
 
@@ -27,7 +27,6 @@
             Plays For @pi.TeamName
         </li>
     </ul>
-  
 </div>
 
 @code {
