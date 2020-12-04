@@ -2,10 +2,10 @@
 	@RuggerId UNIQUEIDENTIFIER,
 	@TeamId UNIQUEIDENTIFIER
 AS
-	DELETE DBO.RuggerTeam
+	DELETE dbo.RuggerTeam
 	WHERE RuggerId = @RuggerId;
 
-	INSERT DBO.RuggerTeam (TeamId, RuggerId)
+	INSERT dbo.RuggerTeam (TeamId, RuggerId)
 	VALUES (@TeamId, @RuggerId)
 
 RETURN 1
