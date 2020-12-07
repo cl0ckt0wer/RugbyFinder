@@ -7,30 +7,20 @@
 
 @page "/teams"
 <h3>Teams</h3>
-@foreach (var p in teams)
-{
-    <div class="container">
-        <ul class="list-unstyled">
-            <li class="media">
-                <img class="mr-3" src="@p.TeamImageURI" alt="GPI" />
-                <div class="media-body">
 
-                    <h3>@p.TeamName</h3>
-                    <h4>@p.City.City, @p.City.Admin_name, @p.City.Country</h4>
-                    @p.TeamBio
-                    <a href="teamprofile/@p.TeamId">Profile</a>
-                </div>
-            </li>
-        </ul>
-    </div>
-}
 
-@code {
-    IEnumerable<TeamModel> teams = new TeamModel[0];
+@functions
+ {
+    IEnumerable<TeamModel>
+    teams = new TeamModel[0];
     string guidstring = string.Empty;
     protected override async Task OnInitializedAsync()
     {
-        var guidstring = await localStorage.GetItemAsync<string>("guid");
-        teams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"teams/{guidstring}");
+    #if DEBUG
+
+    await Task.Delay(5000);
+    #endif
+    var guidstring = await localStorage.GetItemAsync<string>("guid");
+    teams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"teams/{guidstring}");
     }
 }

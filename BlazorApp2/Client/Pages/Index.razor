@@ -124,12 +124,13 @@ else
     bool teambuttondisabled = true;
     TeamPostModel tm = new TeamPostModel();
     IEnumerable<CityInfo> cityInfos = new CityInfo[0];
+    bool debugmode = false;
 
     protected override async Task OnInitializedAsync()
     {
 #if DEBUG
-
-        await Task.Delay(5000);
+        debug = true;
+        //await Task.Delay(5000);
 #endif
         location = await LocationService.GetLocationAsync();
         guidstring = await localStorage.GetItemAsync<string>("guid");

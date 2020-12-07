@@ -24,8 +24,8 @@ BEGIN
 		ORDER BY Coordinate.STDistance(@geo))
 	SELECT N.Name, CTE.LOCATIONORDER, cte.Id as [guid], n.Bio
 	FROM CTE
-	JOIN RuggerName N ON N.Id = CTE.Id
+	LEFT JOIN RuggerName N ON N.Id = CTE.Id
 	LEFT JOIN RuggerTeam RT ON RT.RuggerId = N.Id
 	LEFT JOIN Teams T ON T.Id = RT.TeamId
-
+	LEFT JOIN RuggerPic P ON P.Id = CTE.Id
 END
