@@ -23,10 +23,7 @@ namespace BlazorApp2.Server.Controllers
             _logger = logger;
             sqlConnectionStringBuilder = new SqlConnectionStringBuilder(configuration.GetConnectionString("MessagingDatabase"));
         }
-        public IActionResult Index()
-        {
-            return Ok();
-        }
+       
         [HttpPost]
         public async Task<IEnumerable<ClosestRuggers>> RuggersAsync(CityInfoArgs newcityinfoargs)
         {

@@ -8,7 +8,7 @@ namespace BlazorApp2.Shared
         public int LocationOrder { get; set; }
         public Guid guid { get; set; }
         public string Bio { get; set; }
-        public byte[] Pic { get; set; }
+        public byte[] Pic { get; set; } = new byte[0];
         public string ImageURI
         {
             get

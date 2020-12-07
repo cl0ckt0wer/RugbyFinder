@@ -7,10 +7,12 @@ AS
 	, c.City
 	, T.TeamName
 	, T.ID AS [MyTeamId]
+	, P.Pic
 	FROM DBO.RuggerName RN 
 	LEFT JOIN DBO.RuggerLocation RL ON RL.Id = RN.Id
 	LEFT JOIN DBO.Cities C ON C.id = dbo.sfn_GetClosestCityId(rl.Coordinate)
 	LEFT JOIN DBO.RuggerTeam RT ON RT.RuggerId = RN.Id
 	LEFT JOIN DBO.Teams T ON T.ID = RT.TeamId
+	LEFT JOIN dbo.RuggerPic P ON RN.Id = P.Id
 	WHERE RN.Id = @guid
 RETURN 1

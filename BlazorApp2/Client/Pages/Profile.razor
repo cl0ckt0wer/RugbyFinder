@@ -9,6 +9,8 @@
 
 
 <div class="jumbotron">
+    <img src="@DefaultIfNone(pi.ImageURI)">
+
     <h1 class="display-4">@pi.Name</h1>
     <p class="lead">@pi.City</p>
     <hr class="my-4">
@@ -24,7 +26,9 @@
             @pi.DaysSinceCreate days since created
         </li>
         <li class="list-group-item">
-            Plays For @pi.TeamName
+            <a  href="/teamprofile/@pi.MyTeamId">
+                Plays For @pi.TeamName
+            </a>
         </li>
     </ul>
 </div>
@@ -39,5 +43,16 @@
     {
         pi = await Http.GetFromJsonAsync<ProfileInfo>($"Profile/{Id}");
 
+    }
+    protected string DefaultIfNone(string img)
+    {
+        if (string.IsNullOrEmpty(img))
+        {
+            return "/pics/person.svg";
+        }
+        else
+        {
+            return img;
+        }
     }
 }

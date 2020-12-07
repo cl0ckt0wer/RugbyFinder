@@ -5,20 +5,20 @@
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 <h3>Players</h3>
-<ul class="list-unstyled">
+
     @foreach (var p in ruggers)
     {
-        <li class="media">
-            <img class="mr-3" src"..." alt="GPI" />
-            <div class="media-body">
 
-                <a href="/Profile/@p.guid">@p.Name</a>
-                @p.Bio
-
+        <div class="card" style="width: 18rem;">
+            <img src="@DefaultIfNone(p.ImageURI)" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">@p.Name</h5>
+                <p class="card-text">@p.Bio</p>
+                <a href="/Profile/@p.guid" class="btn btn-primary">Profile</a>
             </div>
-        </li>
+        </div>
     }
-</ul>
+
 
 
 @code {
@@ -40,4 +40,16 @@
         ruggers = (await response.Content.ReadFromJsonAsync<IEnumerable<ClosestRuggers>>()).ToArray();
 
     }
+    protected string DefaultIfNone(string img)
+    {
+        if (string.IsNullOrEmpty(img))
+        {
+            return "/pics/person.svg";
+        }
+        else
+        {
+            return img;
+        }
+    }
+
 }

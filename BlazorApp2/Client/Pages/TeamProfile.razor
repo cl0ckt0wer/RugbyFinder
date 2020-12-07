@@ -4,29 +4,34 @@
 @inject HttpClient Http
 @page "/teamprofile/{id:guid}"
 <h3>TeamProfile</h3>
-<div class="card" style="width: 18rem;">
-    <img class="card-img-top" src="@imageDataUri" alt="TeamProfilePicture" />
-    <div class="card-body">
-        <h5 class="card-title">@tm?.TeamName</h5>
-        <h6>@tm?.City.City, @tm?.City.Admin_name, @tm?.City.Country</h6>
-        <p class="card-text">@tm?.TeamBio</p>
-    </div>
+<div class="jumbotron">
+    <img src="@DefaultIfNone(tm.TeamImageURI)">
+    <h1 class="display-4">@tm.TeamName</h1>
+    <p class="lead">@tm.City.City, @tm.City.Admin_name </p>
+    <hr class="my-4">
+    <p>@tm.TeamBio</p>
 </div>
 @code {
-        [Parameter]
-        public Guid Id { get; set; }
-        TeamModel tm;
-        string imageDataUri = "";
-        string format = "image/png";
+    [Parameter]
+    public Guid Id { get; set; }
+    TeamModel tm = new TeamModel();
 
     protected override async Task OnInitializedAsync()
     {
         //tm = await Http.GetFromJsonAsync<TeamModel>($"teams/profile/{Id}");
         //var test = await Http.GetAsync($"teamprofile/{Id}");
         tm = await Http.GetFromJsonAsync<TeamModel>($"TeamProfile/{Id}");
-        if (tm.TeamPic != null && tm.TeamPic.Length > 0)
+
+    }
+    protected string DefaultIfNone(string img)
+    {
+        if (string.IsNullOrEmpty(img))
         {
-            imageDataUri = $"data:{format};base64,{Convert.ToBase64String(tm.TeamPic)}";
+            return "/pics/people.svg";
+        }
+        else
+        {
+            return img;
         }
     }
 }

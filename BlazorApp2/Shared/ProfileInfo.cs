@@ -11,5 +11,18 @@ namespace BlazorApp2.Shared
         public string City { get; set; }
         public string TeamName { get; set; }
         public Guid? MyTeamId { get; set; }
+        public byte[] Pic { get; set; } = new byte[0];
+        public string ImageURI
+        {
+            get
+            {
+                if (Pic.Length > 0)
+                {
+                    return $"data:image/png;base64,{Convert.ToBase64String(Pic)}";
+                }
+                return string.Empty;
+            }
+        }
+
     }
 }

@@ -25,7 +25,7 @@ namespace BlazorApp2.Server.Controllers
         [Route("{id:guid}")]
         public async Task<TeamModel> GetTeamProfileAsync(Guid id)
         {
-            var sql = "Get_TeamProfileInfo";
+            var sql = "Proc_GetTeamProfileInfo";
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {
                 var test = await conn.QueryAsync<TeamModel, CityInfo, TeamModel>(sql

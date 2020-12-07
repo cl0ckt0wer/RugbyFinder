@@ -7,8 +7,18 @@
 
 @page "/teams"
 <h3>Teams</h3>
+@foreach (var p in teams)
+{
 
-
+    <div class="card" style="width: 18rem;">
+        <img src="@DefaultIfNone(p.TeamImageURI)" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">@p.TeamName</h5>
+            <p class="card-text">@p.TeamBio</p>
+            <a href="/teamprofile/@p.TeamId" class="btn btn-primary">Profile</a>
+        </div>
+    </div>
+}
 @functions
  {
     IEnumerable<TeamModel>
@@ -16,11 +26,20 @@
     string guidstring = string.Empty;
     protected override async Task OnInitializedAsync()
     {
-    #if DEBUG
 
-    await Task.Delay(5000);
-    #endif
-    var guidstring = await localStorage.GetItemAsync<string>("guid");
-    teams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"teams/{guidstring}");
+        var guidstring = await localStorage.GetItemAsync<string>("guid");
+        teams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"teams/{guidstring}");
+    }
+    protected string DefaultIfNone(string img)
+    {
+        if (string.IsNullOrEmpty(img))
+        {
+            return "/pics/people.svg";
+        }
+        else
+        {
+            return img;
+        }
     }
 }
+

@@ -22,7 +22,7 @@ BEGIN
 		FROM RuggerLocation l
 		WHERE Coordinate.STDistance(@geo) IS NOT NULL  
 		ORDER BY Coordinate.STDistance(@geo))
-	SELECT N.Name, CTE.LOCATIONORDER, cte.Id as [guid], n.Bio
+	SELECT N.Name, CTE.LOCATIONORDER, cte.Id as [guid], n.Bio, p.Pic
 	FROM CTE
 	LEFT JOIN RuggerName N ON N.Id = CTE.Id
 	LEFT JOIN RuggerTeam RT ON RT.RuggerId = N.Id
