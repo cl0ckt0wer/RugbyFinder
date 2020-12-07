@@ -50,6 +50,7 @@
     <DefineTrace>true</DefineTrace>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunSqlCodeAnalysis>True</RunSqlCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
@@ -91,6 +92,8 @@
     <Build Include="Storage\FS1.sql" />
     <Build Include="dbo\Stored Procedures\Proc_UpsertRuggerPic_1.sql" />
     <Build Include="dbo\Stored Procedures\Get_TeamProfileInfo_1.sql" />
+    <Build Include="dbo\Tables\TeamPic_2.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetTeamByOwner_1.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Messaging.publish.xml" />

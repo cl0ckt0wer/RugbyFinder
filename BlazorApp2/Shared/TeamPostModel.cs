@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlazorApp2.Shared
 {
-    public class TeamPutModel : TeamModel
+    public class TeamPostModel : TeamModel
     {
         public Guid RuggerOwner { get; set; } = Guid.Empty;
     }

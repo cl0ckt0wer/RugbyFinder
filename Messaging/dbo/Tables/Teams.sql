@@ -5,6 +5,6 @@
 	[TeamCityId] INT,
 	[TeamBio] NVARCHAR(MAX), 
     [TeamOwner] UNIQUEIDENTIFIER NOT NULL
-	
+	INDEX IX_TeamOwner ([TeamOwner])
 	
 )

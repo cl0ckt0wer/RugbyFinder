@@ -15,19 +15,25 @@
     <InputTextArea class="form-control" id="bio" @bind-Value="teamModel.TeamBio" />
     <label for="city">City</label>
     <InputSelect class="form-control" id="city" @bind-Value="teamModel.TeamCityId">
-        <option>Please Select A Home City For This Team</option>
+        <option value="">Please Select A Home City For This Team</option>
         @foreach (var c in cityInfos)
         {
             <option value="@c.CityId">@c.City</option>
         }
     </InputSelect>
+    <label for="teampic">Team Profile Picture</label>
+    <InputFile class="form-control" id="teampic" OnChange="@OnInputFileChange"></InputFile>
+    <img id="profilepic" src="@imageDataUri" />
     <button class="button button-primary form-control" type="submit">Submit</button>
 </EditForm>
 
 @code {
     string guidstring = string.Empty;
-    TeamPutModel teamModel = new TeamPutModel();
+    TeamPostModel teamModel = new TeamPostModel();
     IEnumerable<CityInfo> cityInfos = new CityInfo[0];
+    string format = "image/png";
+    string imageDataUri = "";
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,5 +49,15 @@
             await Http.PostAsJsonAsync("/teams", teamModel);
             NavigationManager.NavigateTo("/teampicker");
         }
+    }
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+
+        var browserFile = await e.File.RequestImageFileAsync(format, 300, 300);
+        using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
+        var buffer = new byte[stream.Length];
+        await stream.ReadAsync(buffer);
+        teamModel.TeamPic = buffer;
+        imageDataUri = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
     }
 }

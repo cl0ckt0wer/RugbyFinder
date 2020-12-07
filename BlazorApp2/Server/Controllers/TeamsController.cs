@@ -32,7 +32,7 @@ namespace BlazorApp2.Server.Controllers
             var sql = "Proc_GetClosestTeamsByRugger";
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {
-                return await conn.QueryAsync<TeamModel, CityInfo, TeamModel>(sql
+                var xx = await conn.QueryAsync<TeamModel, CityInfo, TeamModel>(sql
                     , (teamModel, cityInfo) =>
                      {
                          teamModel.City = cityInfo;
@@ -40,17 +40,14 @@ namespace BlazorApp2.Server.Controllers
                      }, splitOn: "CityId"
                     , param: new { myguid }
                     , commandType: CommandType.StoredProcedure);
+                return xx;
             }
         }
        
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> PostTeamsAsync(TeamPutModel model)
+        public async Task<IActionResult> PostTeamsAsync(TeamPostModel model)
         {
-            //make sure team doesn't exist
-            var checksql = "SELECT TOP 1 1 FROM DBO.TEAMS WHERE ID = @MYGUID";
+          
             var sql = "Proc_UpsertTeam";
             var dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("Id", model.TeamId);
@@ -58,17 +55,13 @@ namespace BlazorApp2.Server.Controllers
             dynamicParameters.Add("Bio", model.TeamBio);
             dynamicParameters.Add("CityId", model.TeamCityId);
             dynamicParameters.Add("Owner", model.RuggerOwner);
+            dynamicParameters.Add("Teampic", model.TeamPic);
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {
-                var x = await conn.ExecuteScalarAsync<int>(checksql, new { myguid = model.TeamId });
-                if (x != 0)
-                {
-                    return Conflict();
-                }
                 var y = await conn.ExecuteAsync(sql, dynamicParameters, commandType: CommandType.StoredProcedure);
                 if (y > 0)
                 {
-                    return Created(nameof(TeamsAsync), y);
+                    return Accepted();
                 }
 
             }

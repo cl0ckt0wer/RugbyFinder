@@ -6,6 +6,11 @@ BEGIN
 	SELECT TOP (1) @Geo = Coordinate
 	FROM RuggerLocation R
 	WHERE R.Id = @myguid;
+	
+	IF @Geo IS NULL
+	BEGIN
+		RETURN(-1);
+	END;
 
 	 	WITH CTE AS (
 		SELECT TOP(100) C.*

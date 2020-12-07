@@ -60,6 +60,48 @@
         <label for="selectpic">Select a Profile Picture</label>
         <InputFile class="form-control-file" id="selectpic" OnChange="@OnInputFileChange" />
     </div>
+    @if (tm.TeamId != Guid.Empty)
+    {
+        <EditForm Model="@tm" OnValidSubmit="@UpdateTeamAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group">
+                <label for="teamname">Edit your Team Name</label>
+                <InputText class="form-control" id="teamname" @bind-Value="@tm.TeamName" />
+            </div>
+            <div class="form-group">
+                <label for="teambio">
+                    Edit your teams bio
+                </label>
+                <InputTextArea class="form-control" id="teambio" @bind-Value="@tm.TeamBio"></InputTextArea>
+
+            </div>
+            <div class="form-group">
+                <label for="teamcity">Change Team City</label>
+                <InputSelect class="form-control" id="teamcity" @bind-Value="tm.City.CityId">
+                    <option value="@tm.City.CityId">@tm.City.City</option>
+                    @foreach (var c in cityInfos)
+                            {
+                        @if (tm.City.CityId != c.CityId)
+                                {
+                            <option value="@c.CityId">@c.City</option>
+                                }
+                            }
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label for="teampic">Team Profile Picture</label>
+                <InputFile class="form-control" id="teampic" OnChange="@TeamPicChange"></InputFile>
+                
+                    <img id="profilepic" src="@tm.TeamImageURI" />
+               
+
+            </div>
+
+
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </EditForm>
+    }
 }
 else
 { <h1>Loading...</h1>}
@@ -80,9 +122,13 @@ else
     string imageDataUri = "";
     string format = "image/png";
     bool teambuttondisabled = true;
+    TeamPostModel tm = new TeamPostModel();
+    IEnumerable<CityInfo> cityInfos = new CityInfo[0];
+
     protected override async Task OnInitializedAsync()
     {
 #if DEBUG
+
         await Task.Delay(5000);
 #endif
         location = await LocationService.GetLocationAsync();
@@ -117,8 +163,9 @@ else
         {
             imageDataUri = $"data:{format};base64,{Convert.ToBase64String(myInfo.ProfilePic)}";
         }
+        tm = await Http.GetFromJsonAsync<TeamPostModel>($"teamowner/{guid}");
+        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
         debug = true;
-
 
     }
     private async Task UpdateNameAsync()
@@ -135,6 +182,15 @@ else
 
 
     }
+    private async Task UpdateTeamAsync()
+    {
+        if (!string.IsNullOrEmpty(tm.TeamName))
+        {
+            var args = (TeamPostModel)tm;
+            args.RuggerOwner = guid;
+            await Http.PostAsJsonAsync("/teams", args);
+        }
+    }
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
 
@@ -143,13 +199,21 @@ else
         var buffer = new byte[stream.Length];
         await stream.ReadAsync(buffer);
         var args = new RuggerPic() { Pic = buffer, RuggerId = guid };
-
         await Http.PostAsJsonAsync("RuggerPic", args);
         imageDataUri = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
     }
     private void PickATeam()
     {
         NavigationManager.NavigateTo("/teampicker");
+    }
+    private async void TeamPicChange(InputFileChangeEventArgs e)
+    {
+        var browserFile = await e.File.RequestImageFileAsync(format, 300, 300);
+        using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
+        var buffer = new byte[stream.Length];
+        await stream.ReadAsync(buffer);
+        tm.TeamPic = buffer;
+        var x = (tm.TeamImageURI == $"data:{format};base64,{Convert.ToBase64String(buffer)}");
     }
 
 }
