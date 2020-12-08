@@ -1,6 +1,6 @@
 {
-  "name": "BlazorApp2",
-  "short_name": "BlazorApp2",
+  "name": "Find-A-Ruggr",
+  "short_name": "Ruggr",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
