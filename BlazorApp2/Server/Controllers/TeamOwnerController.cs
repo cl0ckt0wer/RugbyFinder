@@ -36,7 +36,7 @@ namespace BlazorApp2.Shared
                         return teamModel;
                     }, splitOn: "CityId"
                     , param: new { ownerGuid = myguid }, commandType: CommandType.StoredProcedure);
-                return x.FirstOrDefault();
+                return x.FirstOrDefault() ?? new TeamModel();
             }
         }
 
