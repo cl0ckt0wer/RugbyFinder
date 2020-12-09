@@ -28,5 +28,6 @@ BEGIN
 	LEFT JOIN RuggerTeam RT ON RT.RuggerId = N.Id
 	LEFT JOIN Teams T ON T.Id = RT.TeamId
 	LEFT JOIN RuggerPic P ON P.Id = CTE.Id
-	WHERE LEN(Name) > 1
+	WHERE LEN(Name) > 1 
+		AND NAME IS NOT NULL
 END

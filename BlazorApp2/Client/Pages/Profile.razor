@@ -26,9 +26,16 @@
             @pi.DaysSinceCreate days since created
         </li>
         <li class="list-group-item">
-            <a  href="/teamprofile/@pi.MyTeamId">
-                Plays For @pi.TeamName
-            </a>
+            @if (string.IsNullOrEmpty(@pi.TeamName))
+            {
+                <div>No Team Set</div>
+            }
+            else
+            {
+                <a href="/teamprofile/@pi.MyTeamId">
+                    Plays For @pi.TeamName
+                </a>
+            }
         </li>
     </ul>
 </div>
