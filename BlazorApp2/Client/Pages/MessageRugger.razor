@@ -1,5 +1,46 @@
-﻿<h3>MessageRugger</h3>
+﻿@using AspNetMonsters.Blazor.Geolocation
+@using BlazorApp2.Shared
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavigationManager
+
+
+
+@page "/messagerugger/{id:guid}"
+
+
+<h3>MessageRugger</h3>
+<div class="container-fluid">
+    <EditForm Model="@messageruggerModel" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputText id="name" @bind-Value="exampleModel.Name" />
+
+        <button type="submit">Submit</button>
+    </EditForm>
+</div>
 
 @code {
+    [Parameter]
+    public Guid Id { get; set; }
+    private string guidstring = string.Empty;
+    public RuggerMessageModel messModel = new RuggerMessageModel();
+    protected override async Task OnInitializedAsync()
+    {
+        //get pending messages
+        guidstring = await localStorage.GetItemAsync<string>("guid");
+        if (string.IsNullOrEmpty(guidstring))
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        var rmargs = new RuggerMessagePostArgs();
+        rmargs.TheirGuid = Id;
+        rmargs.MyGuid = Guid.Parse(guidstring);
 
+        var response = await Http.PostAsJsonAsync("ruggermessage", rmargs);
+        var messModel = await response.Content.ReadFromJsonAsync<RuggerMessageModel>();
+
+    }
 }
