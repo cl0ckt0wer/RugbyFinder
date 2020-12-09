@@ -102,6 +102,9 @@
     <Build Include="dbo\Stored Procedures\Proc_GetClosestCitiesByRugger.sql" />
     <Build Include="dbo\Stored Procedures\GetTeamInfo.sql" />
     <Build Include="dbo\Stored Procedures\Proc_GetTeamProfileInfo.sql" />
+    <Build Include="dbo\Tables\Messages.sql" />
+    <Build Include="Storage\MO1.sql" />
+    <Build Include="dbo\Stored Procedures\Get_TeamProfileInfo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Messaging.publish.xml" />
