@@ -8,8 +8,10 @@ namespace BlazorApp2.Shared
 {
     public class RuggerMessageModel
     {
-        public Guid Other { get; set; } = Guid.Empty;
-
-        public List<string> MyMessage { get; set; } = new List<string>();
+        public Guid From { get; set; } = Guid.Empty;
+        public Guid To { get; set; } = Guid.Empty;
+        public string Message { get; set; } = string.Empty;
+        public DateTime sentDate { get; set; } = DateTime.MinValue;
     }
+  
 }

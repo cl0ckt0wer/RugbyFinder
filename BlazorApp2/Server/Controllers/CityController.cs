@@ -38,7 +38,6 @@ namespace BlazorApp2.Server.Controllers
             }
 
         }
-        [HttpGet]
         [Route("{myguid:guid}")]
         public async Task<IEnumerable<CityInfo>> GetCityAsync(Guid myguid)
         {

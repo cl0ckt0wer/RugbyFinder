@@ -12,21 +12,27 @@
 
 <h3>MessageRugger</h3>
 <div class="container-fluid">
-    <EditForm Model="@messageruggerModel" OnValidSubmit="@HandleValidSubmit">
+    <EditForm Model="@Messagetosend" OnValidSubmit="@HandleSendMessage">
         <DataAnnotationsValidator />
         <ValidationSummary />
+        <label for="message">Type a message:</label>
+        <InputText id="message"  @bind-Value="Messagetosend" />
 
-        <InputText id="name" @bind-Value="exampleModel.Name" />
-
-        <button type="submit">Submit</button>
+        <button class="btn btn-primary"  type="submit">Submit</button>
     </EditForm>
 </div>
-
+<ul class="list-group">
+    @foreach (var m in messModel.MyMessage)
+    {
+        <li class="list-group-item">@m</li>
+    }
+</ul>
 @code {
     [Parameter]
     public Guid Id { get; set; }
     private string guidstring = string.Empty;
     public RuggerMessageModel messModel = new RuggerMessageModel();
+    public string Messagetosend = string.Empty;
     protected override async Task OnInitializedAsync()
     {
         //get pending messages
