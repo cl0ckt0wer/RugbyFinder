@@ -20,7 +20,7 @@ namespace BlazorApp2.Server.Controllers
         {
             _cstring = new SqlConnectionStringBuilder(configuration.GetConnectionString("MessagingDatabase"));
         }
-        [HttpGet("{myid:guid/theirid:guid")]
+        [HttpGet("{myid:guid}/{theirid:guid}")]
         public async Task<IEnumerable<RuggerMessageModel>> GetRuggerMessageAsync(Guid myid, Guid theirid)
         {
             var sql = "Proc_GetRuggerMessage";
@@ -30,6 +30,20 @@ namespace BlazorApp2.Server.Controllers
                 return result;
             }
                 
+        }
+        [HttpPost]
+        public async Task<IActionResult> PostRuggerMessage(RuggerMessagePostArgs args)
+        {
+            if (args.Message.Length > 2000)
+            {
+                args.Message = args.Message.Substring(0, 2000);
+            }
+            var sql = "Proc_InsertRuggerMessage";
+            using (var conn = new SqlConnection(_cstring.ConnectionString))
+            {
+                await conn.ExecuteAsync(sql, new { From = args.MyGuid, To = args.TheirGuid, Message = args.Message }, commandType: System.Data.CommandType.StoredProcedure);
+            }
+            return Accepted();
         }
     }
 }

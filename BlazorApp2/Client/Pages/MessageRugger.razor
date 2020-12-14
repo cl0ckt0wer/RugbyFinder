@@ -12,26 +12,26 @@
 
 <h3>MessageRugger</h3>
 <div class="container-fluid">
-    <EditForm Model="@Messagetosend" OnValidSubmit="@HandleSendMessage">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <label for="message">Type a message:</label>
-        <InputText id="message"  @bind-Value="Messagetosend" />
-
-        <button class="btn btn-primary"  type="submit">Submit</button>
+    <EditForm class="form-inline" Model="@Messagetosend" OnValidSubmit="@HandleSendMessage" OnInvalidSubmit="@WhyAmIHere">
+    
+        <div class="input-group">
+            <label for="message">Type a message:</label>
+            <InputText class="form-control" id="message" @bind-Value="Messagetosend" />
+        </div>
+        <button class="btn btn-primary mb-2"  type="submit">Send</button>
     </EditForm>
 </div>
 <ul class="list-group">
-    @foreach (var m in messModel.MyMessage)
+    @foreach (var m in messModel)
     {
-        <li class="list-group-item">@m</li>
+        <li class="list-group-item">@m.Message</li>
     }
 </ul>
 @code {
     [Parameter]
     public Guid Id { get; set; }
     private string guidstring = string.Empty;
-    public RuggerMessageModel messModel = new RuggerMessageModel();
+    public IEnumerable<RuggerMessageModel> messModel = new RuggerMessageModel[0];
     public string Messagetosend = string.Empty;
     protected override async Task OnInitializedAsync()
     {
@@ -45,8 +45,29 @@
         rmargs.TheirGuid = Id;
         rmargs.MyGuid = Guid.Parse(guidstring);
 
-        var response = await Http.PostAsJsonAsync("ruggermessage", rmargs);
-        var messModel = await response.Content.ReadFromJsonAsync<RuggerMessageModel>();
+        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{guidstring}/{Id}");
 
+    }
+    protected async Task HandleSendMessage()
+    {
+        var a = new RuggerMessagePostArgs();
+        a.MyGuid = Guid.Parse(guidstring);
+        a.TheirGuid = Id;
+        a.Message = Messagetosend;
+        await Http.PostAsJsonAsync("/ruggermessage", a);
+        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{guidstring}/{Id}");
+
+    }
+    protected async Task SendIfEnter(KeyboardEventArgs args)
+    {
+
+        if (args.Key == "Enter")
+        {
+            await HandleSendMessage();
+        }
+    }
+    protected void WhyAmIHere()
+    {
+        var x = "doh";
     }
 }

@@ -10,5 +10,6 @@ namespace BlazorApp2.Shared
     {
         public Guid MyGuid { get; set; } = Guid.Empty;
         public Guid TheirGuid { get; set; } = Guid.Empty;
+        public string Message { get; set; } = string.Empty;
     }
 }
