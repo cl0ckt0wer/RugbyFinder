@@ -14,5 +14,6 @@ AS BEGIN ATOMIC WITH (
 	FROM dbo.Messages M
 	WHERE (M.[From] = @myid AND M.[To] =  @theirid)
 		OR (M.[From] = @theirid AND M.[To] = @theirid)
+	ORDER BY SentDate DESC
 RETURN 0
 END
