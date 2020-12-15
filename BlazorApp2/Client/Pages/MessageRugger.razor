@@ -9,30 +9,42 @@
 
 @page "/messagerugger/{id:guid}"
 
-
-<h3>MessageRugger</h3>
 <div class="container-fluid">
-    <EditForm class="form-inline" Model="@Messagetosend" OnValidSubmit="@HandleSendMessage">
-    
-        <div class="input-group">
-            <label for="message">Type a message:</label>
-            <InputText class="form-control" id="message" @bind-Value="Messagetosend" />
-        </div>
-        <button class="btn btn-primary mb-2"  type="submit">Send</button>
-    </EditForm>
+    <div class="row">
+        <h3>Message @ruggerInfo.Name</h3>
+    </div>
+    <div class="row">
+
+        <img id="profilepic" src="@ruggerInfo.ImageURI" class="img-fluid float-right" />
+
+    </div>
+
+    <div class="row">
+        <EditForm class="form-inline" Model="@Messagetosend" OnValidSubmit="@HandleSendMessage">
+
+            <div class="form-group mb-2">
+                <label for="message" class="sr-only">Type a message:</label>
+                <InputText placeholder="✍️" class="form-control form-control-plaintext border-bottom" id="message" @bind-Value="Messagetosend" />
+            </div>
+            <button class="btn btn-primary mb-2" type="submit">Send</button>
+        </EditForm>
+    </div>
+    <div class="row">
+        <ul class="list-group">
+            @foreach (var m in messModel)
+            {
+                <li class="list-group-item @GetColor(m.From)"><div class="@Floatside(m.From)">@m.Message</div></li>
+            }
+        </ul>
+    </div>
 </div>
-<ul class="list-group">
-    @foreach (var m in messModel)
-    {
-        <li class="list-group-item @GetColor(m.From)"><div class="@Floatside(m.From)">@m.Message</div></li>
-    }
-</ul>
 @code {
-    [Parameter]
-    public Guid Id { get; set; }
+        [Parameter]
+        public Guid Id { get; set; }
     private string guidstring = string.Empty;
     public IEnumerable<RuggerMessageModel> messModel = new RuggerMessageModel[0];
-    public string Messagetosend = string.Empty;
+    public string Messagetosend { get; set; } = string.Empty;
+    public ProfileInfo ruggerInfo { get; set; } = new ProfileInfo();
     protected override async Task OnInitializedAsync()
     {
         //get pending messages
@@ -46,7 +58,7 @@
         rmargs.MyGuid = Guid.Parse(guidstring);
 
         messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{guidstring}/{Id}");
-
+        ruggerInfo = await Http.GetFromJsonAsync<ProfileInfo>($"profile/{Id}");
     }
     protected async Task HandleSendMessage()
     {

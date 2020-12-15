@@ -5,7 +5,7 @@
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @page "/messagesinbox"
-<h3>Messages</h3>
+<h3>Message Inbox</h3>
 @foreach (var f in inbox)
 {
     <div class="card" >
@@ -21,13 +21,23 @@
 
 @code {
     string guidstring = string.Empty;
-    IEnumerable<InboxItem> inbox = new InboxItem[0];
+    IEnumerable<InboxItem> inbox = new List<InboxItem>();
 
     protected override async Task OnInitializedAsync()
     {
         guidstring = await localStorage.GetItemAsync<string>("guid");
-        var response = await Http.GetFromJsonAsync<string>($"inbox/{guidstring}");
-        //inbox = await Http.GetFromJsonAsync<IEnumerable<InboxItem>>($"inbox/{guidstring}");
-        
+        //THOU SHALT NOT CALL A ROUTE INBOX
+        //try
+        //{
+        //    var get = await Http.GetAsync($"ruggerinbox/{guidstring}");
+        //    var response = await get.Content.ReadAsStringAsync();
+        //}
+        //catch(Exception ex)
+        //{
+        //    var x = ex;
+        //}
+
+        inbox = await Http.GetFromJsonAsync<IEnumerable<InboxItem>>($"ruggerinbox/{guidstring}");
+
     }
 }

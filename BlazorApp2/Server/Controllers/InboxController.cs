@@ -12,16 +12,19 @@ namespace BlazorApp2.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class InboxController : Controller
+    public class RuggerInboxController : Controller
     {
       
         private SqlConnectionStringBuilder _cstring;
       
-        public InboxController(IConfiguration configuration)
+        public RuggerInboxController(IConfiguration configuration)
         {
             _cstring = new SqlConnectionStringBuilder(configuration.GetConnectionString("MessagingDatabase"));
         }
-        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
         [Route("{myguid:guid}")]
         public async Task<IEnumerable<InboxItem>> GetInboxAsync(Guid myguid)
         {
