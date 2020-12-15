@@ -6,12 +6,28 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @page "/messagesinbox"
 <h3>Messages</h3>
+@foreach (var f in inbox)
+{
+    <div class="card" >
+        <div class="card-body">
+            <h5 class="card-title">@f.Name</h5>
+            <h6 class="card-subtitle mb-2 text-muted">@f.LastMessage</h6>
+            <p class="card-text">@f.MessageCount messages</p>
+            <a href="/messagerugger/@f.Id" class="card-link">Messages</a>
+        </div>
+    </div>
+}
+
 
 @code {
-    
-    
+    string guidstring = string.Empty;
+    IEnumerable<InboxItem> inbox = new InboxItem[0];
+
     protected override async Task OnInitializedAsync()
     {
-  
+        guidstring = await localStorage.GetItemAsync<string>("guid");
+        var response = await Http.GetFromJsonAsync<string>($"inbox/{guidstring}");
+        //inbox = await Http.GetFromJsonAsync<IEnumerable<InboxItem>>($"inbox/{guidstring}");
+        
     }
 }
