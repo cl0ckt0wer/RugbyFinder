@@ -17,7 +17,7 @@ BEGIN
     -- Insert statements for procedure here
 
 	WITH CTE AS (
-		SELECT TOP(100) Id, 
+		SELECT TOP(1000) Id, 
 		ROW_NUMBER() OVER (ORDER BY Coordinate.STDistance(@geo)) AS LOCATIONORDER
 		FROM RuggerLocation l
 		WHERE Coordinate.STDistance(@geo) IS NOT NULL  

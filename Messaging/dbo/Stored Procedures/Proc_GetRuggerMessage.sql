@@ -13,7 +13,7 @@ AS BEGIN ATOMIC WITH (
 	SELECT [From], [To], SentDate, Message
 	FROM dbo.Messages M
 	WHERE (M.[From] = @myid AND M.[To] =  @theirid)
-		OR (M.[From] = @theirid AND M.[To] = @theirid)
+		OR (M.[From] = @theirid AND M.[To] = @myid)
 	ORDER BY SentDate DESC
 RETURN 0
 END

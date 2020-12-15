@@ -12,7 +12,7 @@
 
 <h3>MessageRugger</h3>
 <div class="container-fluid">
-    <EditForm class="form-inline" Model="@Messagetosend" OnValidSubmit="@HandleSendMessage" OnInvalidSubmit="@WhyAmIHere">
+    <EditForm class="form-inline" Model="@Messagetosend" OnValidSubmit="@HandleSendMessage">
     
         <div class="input-group">
             <label for="message">Type a message:</label>
@@ -24,7 +24,7 @@
 <ul class="list-group">
     @foreach (var m in messModel)
     {
-        <li class="list-group-item">@m.Message</li>
+        <li class="list-group-item @GetColor(m.From)"><div class="@Floatside(m.From)">@m.Message</div></li>
     }
 </ul>
 @code {
@@ -66,8 +66,27 @@
             await HandleSendMessage();
         }
     }
-    protected void WhyAmIHere()
+    protected string GetColor(Guid guid)
     {
-        var x = "doh";
+        if (guidstring == guid.ToString())
+        {
+            return "list-group-item-light float-right";
+        }
+        else
+        {
+            return "list-group-item-dark";
+        }
     }
+    protected string Floatside(Guid guid)
+    {
+        if (guidstring == guid.ToString())
+        {
+            return "float-right";
+        }
+        else
+        {
+            return "float-left";
+        }
+    }
+
 }
