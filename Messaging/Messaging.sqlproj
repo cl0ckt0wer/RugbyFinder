@@ -105,6 +105,9 @@
     <Build Include="dbo\Tables\Messages.sql" />
     <Build Include="Storage\MO1.sql" />
     <Build Include="dbo\Stored Procedures\Get_TeamProfileInfo.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetInbox.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetRuggerMessage.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_InsertRuggerMessage.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Messaging.publish.xml" />
