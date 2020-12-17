@@ -9,5 +9,6 @@ namespace BlazorApp2.Shared
         public string TeamName { get; set; }
         public Guid? TeamId { get; set; }
         public byte[] ProfilePic { get; set; } = new byte[0];
+        public TeamModel MyTeam { get; set; } = new TeamModel();
     }
 }

@@ -31,6 +31,7 @@ namespace BlazorApp2.Server.Controllers
             var sql = "Proc_GetMyInfo";
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {
+                var y = await conn.QueryAsync<MyInfo>(sql)
                 var x = await conn.QueryFirstOrDefaultAsync<MyInfo>(sql, new { uid = myguid } , commandType: CommandType.StoredProcedure);
                 return x ?? new MyInfo();
             }
