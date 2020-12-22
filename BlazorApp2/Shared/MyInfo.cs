@@ -4,10 +4,9 @@ namespace BlazorApp2.Shared
 {
     public class MyInfo
     {
-        public string MyName { get; set; }
-        public string MyBio { get; set; }
-        public string TeamName { get; set; }
-        public Guid? TeamId { get; set; }
+        public Guid MyId { get; set; } = Guid.Empty;
+        public string MyName { get; set; } = string.Empty;
+        public string MyBio { get; set; } = string.Empty;
         public byte[] ProfilePic { get; set; } = new byte[0];
         public TeamModel MyTeam { get; set; } = new TeamModel();
     }

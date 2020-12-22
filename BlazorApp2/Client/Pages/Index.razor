@@ -14,7 +14,7 @@
     <div class="container-fluid">
         <h1>Welcome</h1><h2> @myInfo.MyName</h2>
         <p class="alert-primary">
-
+            @myInfo.MyTeam.TeamBio
         </p>
         <img id="profilepic" src="@imageDataUri" class="img-fluid float-right" />
         <p>
@@ -32,7 +32,7 @@
             Country: @closestCity?.Country <br />
             State: @closestCity?.Admin_name <br />
             City: @closestCity?.City <br />
-            My Team: @myInfo.TeamName <br />
+            My Team: @myInfo.MyTeam.TeamName <br />
 
         </div>
     </div>
@@ -123,7 +123,7 @@ else
     string guidstring = string.Empty;
     //IndexModel indexModel = new IndexModel() { MyBio = string.Empty, MyName = string.Empty };
     //TeamModel teamModel = new TeamModel();
-    MyInfo myInfo = new MyInfo() { MyBio = string.Empty, TeamId = Guid.Empty, TeamName = string.Empty, MyName = string.Empty };
+    MyInfo myInfo = new MyInfo();
     bool debug = false;
     string imageDataUri = "";
     string format = "image/png";
