@@ -53,7 +53,7 @@ namespace BlazorApp2.Server.Controllers
             dynamicParameters.Add("Id", model.TeamId);
             dynamicParameters.Add("Name", model.TeamName);
             dynamicParameters.Add("Bio", model.TeamBio);
-            dynamicParameters.Add("CityId", model.TeamCityId);
+            dynamicParameters.Add("CityId", model.City.CityId);
             dynamicParameters.Add("Owner", model.RuggerOwner);
             dynamicParameters.Add("Teampic", model.TeamPic);
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))

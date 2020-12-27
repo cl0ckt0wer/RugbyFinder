@@ -24,7 +24,7 @@ namespace BlazorApp2.Shared
         }
         [HttpGet]
         [Route("{myguid:guid}")]
-        public async Task<TeamModel> GetOwnedTeamAsync(Guid myguid)
+        public async Task<TeamPostModel> GetOwnedTeamAsync(Guid myguid)
         {
             var sql = "Proc_GetTeamByOwner";
             using (var conn = new SqlConnection(_cstring.ConnectionString))
@@ -36,7 +36,7 @@ namespace BlazorApp2.Shared
                         return teamModel;
                     }, splitOn: "CityId"
                     , param: new { ownerGuid = myguid }, commandType: CommandType.StoredProcedure);
-                return x.FirstOrDefault() ?? new TeamModel();
+                return x.FirstOrDefault() ?? new TeamPostModel();
             }
         }
 

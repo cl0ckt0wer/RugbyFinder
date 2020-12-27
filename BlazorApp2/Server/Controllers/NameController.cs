@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BlazorApp2.Server.Controllers
@@ -31,8 +32,15 @@ namespace BlazorApp2.Server.Controllers
             var sql = "Proc_GetMyInfo";
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {
-                var x = await conn.QueryFirstOrDefaultAsync<MyInfo>(sql, new { uid = myguid } , commandType: CommandType.StoredProcedure);
-                return x ?? new MyInfo();
+                //myInfo, TeamModel, CityInfo
+                var y = await conn.QueryAsync<MyInfo, TeamModel, CityInfo, MyInfo>(sql, (info, team, city) =>
+                {
+                    info.MyTeam = team ?? new TeamModel();
+                    info.MyTeam.City = city ?? new CityInfo();
+                    return info;
+                }, splitOn: "TeamId, CityId", param: new { uid = myguid }, commandType: CommandType.StoredProcedure);
+                //var x = await conn.QueryFirstOrDefaultAsync<MyInfo>(sql, new { uid = myguid } , commandType: CommandType.StoredProcedure);
+                return y.FirstOrDefault() ?? new MyInfo();
             }
         }
         [HttpPost]
