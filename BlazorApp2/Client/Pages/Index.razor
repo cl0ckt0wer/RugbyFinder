@@ -4,7 +4,7 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
-
+@inject IJSRuntime JS
 
 @page "/"
 
@@ -100,7 +100,15 @@
     🏉🏉🏉🏉🏉
 </p>
 
-
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </EditForm>
+        <div class="@UpdateAvailable alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>New update</strong> Please rstart the app
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
 }
 else
 { <h1>Loading...</h1>}
@@ -123,6 +131,7 @@ else
     bool teambuttondisabled = true;
     TeamPostModel tm = new TeamPostModel();
     IEnumerable<CityInfo> cityInfos = new CityInfo[0];
+    public string UpdateAvailable { get; set; } = "d-none";
 
     protected override async Task OnInitializedAsync()
     {
@@ -164,8 +173,11 @@ else
         }
         tm = await Http.GetFromJsonAsync<TeamPostModel>($"teamowner/{guid}");
         cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
-        debug = true;
-
+        var iua = await JS.InvokeAsync<bool>("isUpdateAvailable");
+        if (iua)
+        {
+            UpdateAvailable = string.Empty;
+        }
     }
     private async Task UpdateNameAsync()
     {
