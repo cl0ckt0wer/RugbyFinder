@@ -1,0 +1,76 @@
+﻿@using AspNetMonsters.Blazor.Geolocation
+@using BlazorApp2.Shared
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@page "/editmyteam"
+<h3>Edit My Team</h3>
+<EditForm Model="@tm" OnValidSubmit="@UpdateTeamAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="teamname">Edit your Team Name</label>
+        <InputText class="form-control" id="teamname" @bind-Value="@tm.TeamName" />
+    </div>
+    <div class="form-group">
+        <label for="teambio">
+            Edit your teams bio
+        </label>
+        <InputTextArea class="form-control" id="teambio" @bind-Value="@tm.TeamBio"></InputTextArea>
+
+    </div>
+    <div class="form-group">
+        <label for="teamcity">Change Team City</label>
+        <InputSelect class="form-control" id="teamcity" @bind-Value="tm.City.CityId">
+            <option value="@tm.City.CityId">@tm.City.City</option>
+            @foreach (var c in cityInfos)
+            {
+                @if (tm.City.CityId != c.CityId)
+                {
+                    <option value="@c.CityId">@c.City</option>
+                }
+            }
+        </InputSelect>
+    </div>
+    <div class="form-group">
+        <label for="teampic">Team Profile Picture</label>
+        <InputFile class="form-control" id="teampic" OnChange="@TeamPicChange"></InputFile>
+        <img id="profilepic" src="@tm.TeamImageURI" />
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+</EditForm>
+    }
+@code {
+    string guidstring = string.Empty;
+    MyInfo myInfo = new MyInfo();
+    TeamPostModel tm = new TeamPostModel();
+    IEnumerable<CityInfo> cityInfos = new CityInfo[0];
+    string format = "image/png";
+
+    protected override async Task OnInitializedAsync()
+    {
+        guidstring = await localStorage.GetItemAsync<string>("guid");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guidstring}");
+        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
+
+    }
+    private async Task UpdateTeamAsync()
+    {
+        if (!string.IsNullOrEmpty(tm.TeamName))
+        {
+            var args = (TeamPostModel)tm;
+            args.RuggerOwner = Guid.Parse(guidstring);
+            await Http.PostAsJsonAsync("/teams", args);
+        }
+    }
+    private async void TeamPicChange(InputFileChangeEventArgs e)
+    {
+        var browserFile = await e.File.RequestImageFileAsync(format, 300, 300);
+        using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
+        var buffer = new byte[stream.Length];
+        await stream.ReadAsync(buffer);
+        tm.TeamPic = buffer;
+        var x = (tm.TeamImageURI == $"data:{format};base64,{Convert.ToBase64String(buffer)}");
+    }
+}

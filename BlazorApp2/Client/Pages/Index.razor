@@ -11,12 +11,48 @@
 
 @if (debug)
 {
-    <div class="container-fluid">
-        <h1>Welcome</h1><h2> @myInfo.MyName</h2>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            @myInfo.MyTeam.TeamBio
+        </div>
+        @if (!string.IsNullOrEmpty(myInfo.MyImageURI))
+            {
+        <img id="profilepic" src="@imageDataUri" class="card-img-top" />
+            }
+        <div class="card-body">
+
+            @if (string.IsNullOrEmpty(myInfo.MyName))
+                {
+            <h5>Please enter a name</h5>
+                }
+                else
+                {
+            <h2>@myInfo.MyName </h2>
+            <h6 class="card-subtitle mb-2 text-muted">@myInfo.MyTeam.TeamName</h6>
+            <p class="card-text">@myInfo.MyBio</p>
+            <a href="/teamprofile/@myInfo.MyTeam.TeamId" class="card-link">Team Profile</a>
+                }
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">@closestCity.City</li>
+            <li class="list-group-item">@closestCity?.Admin_name</li>
+            <li class="list-group-item">@closestCity?.Country</li>
+        </ul>
+    </div>
+
+    @*<h1>Your Profile</h1>@if (string.IsNullOrEmpty(myInfo.MyName))
+        {
+            <h2>Please enter a name</h2>
+        }
+        else
+        {
+            <h2>@myInfo.MyName </h2>
+        }
         <p class="alert-primary">
             @myInfo.MyTeam.TeamBio
         </p>
-        <img id="profilepic" src="@imageDataUri" class="img-fluid float-right" />
+        <img id="profilepic" src="@imageDataUri" class="img-thumbnail float-right" />
         <p>
             Your Bio: @myInfo.MyBio
         </p>
@@ -34,80 +70,37 @@
             City: @closestCity?.City <br />
             My Team: @myInfo.MyTeam.TeamName <br />
 
+        </div>*@
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <button @onclick="EditProfile" class="btn btn-primary">Edit Profile</button>
+
         </div>
-    </div>
-   
-    <div class="container-fluid float-right">
-        <button @onclick="PickATeam" class="btn btn-primary float-right" href="/teampicker" role="button" disabled="@teambuttondisabled">Pick a Team</button>
-    </div>
+        <div class="col">
+            <button @onclick="PickATeam" class="btn btn-primary" href="/teampicker" role="button" disabled="@teambuttondisabled">Pick a Team</button>
 
-
-
-
-
-    <EditForm Model="@myInfo" OnValidSubmit="@UpdateNameAsync">
-
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div class="form-group">
-            <label for="name">Change your name</label>
-            <InputText class="form-control" id="name" @bind-Value="@myInfo.MyName" />
         </div>
-        <div class="form-group">
-            <label for="bio">Change your bio</label>
-            <InputTextArea class="form-control" id="bio" @bind-Value="@myInfo.MyBio" />
+        <div class="col">
+            <button @onclick="EditPicture" class="btn btn-primary">Edit Picture</button>
         </div>
-        <button class="btn btn-primary" type="submit">Submit</button>
-
-    </EditForm>
-    <div class="form-group">
-
-        <label for="selectpic">Select a Profile Picture</label>
-        <InputFile class="form-control-file" id="selectpic" OnChange="@OnInputFileChange" />
+        @if (tm.TeamId != Guid.Empty)
+            {
+        <div class="col">
+            <button @onclick="EditMyTeam" class="btn btn-primary">Edit My Team</button>
+        </div>
+            }
     </div>
-    @if (tm.TeamId != Guid.Empty)
-    {
-        <EditForm Model="@tm" OnValidSubmit="@UpdateTeamAsync">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div class="form-group">
-                <label for="teamname">Edit your Team Name</label>
-                <InputText class="form-control" id="teamname" @bind-Value="@tm.TeamName" />
-            </div>
-            <div class="form-group">
-                <label for="teambio">
-                    Edit your teams bio
-                </label>
-                <InputTextArea class="form-control" id="teambio" @bind-Value="@tm.TeamBio"></InputTextArea>
+</div>
 
-            </div>
-            <div class="form-group">
-                <label for="teamcity">Change Team City</label>
-                <InputSelect class="form-control" id="teamcity" @bind-Value="tm.City.CityId">
-                    <option value="@tm.City.CityId">@tm.City.City</option>
-                    @foreach (var c in cityInfos)
-                            {
-                        @if (tm.City.CityId != c.CityId)
-                                {
-                            <option value="@c.CityId">@c.City</option>
-                                }
-                            }
-                </InputSelect>
-            </div>
-            <div class="form-group">
-                <label for="teampic">Team Profile Picture</label>
-                <InputFile class="form-control" id="teampic" OnChange="@TeamPicChange"></InputFile>
-
-                <img id="profilepic" src="@tm.TeamImageURI" />
+<p class="text-center">
+    <br />
+    <br />
+    🏉🏉🏉🏉🏉
+</p>
 
 
-            </div>
-
-
-            <button class="btn btn-primary" type="submit">Submit</button>
-        </EditForm>
-
-    }
 }
 else
 { <h1>Loading...</h1>}
@@ -117,14 +110,14 @@ else
 
 @functions
 {
-    Location location;
-    CityInfo closestCity;
+    Location location = new Location();
+    CityInfo closestCity = new CityInfo();
     Guid guid = Guid.Empty;
     string guidstring = string.Empty;
     //IndexModel indexModel = new IndexModel() { MyBio = string.Empty, MyName = string.Empty };
     //TeamModel teamModel = new TeamModel();
     MyInfo myInfo = new MyInfo();
-    bool debug = false;
+    bool debug = true;
     string imageDataUri = "";
     string format = "image/png";
     bool teambuttondisabled = true;
@@ -135,7 +128,7 @@ else
     {
 #if DEBUG
 
-        //await Task.Delay(5000);
+        await Task.Delay(5000);
 #endif
         location = await LocationService.GetLocationAsync();
         guidstring = await localStorage.GetItemAsync<string>("guid");
@@ -221,5 +214,16 @@ else
         tm.TeamPic = buffer;
         var x = (tm.TeamImageURI == $"data:{format};base64,{Convert.ToBase64String(buffer)}");
     }
-
+    private void EditProfile()
+    {
+        NavigationManager.NavigateTo("/editrugger");
+    }
+    private void EditPicture()
+    {
+        NavigationManager.NavigateTo("/editruggerpic");
+    }
+    private void EditMyTeam()
+    {
+        NavigationManager.NavigateTo("/editmyteam");
+    }
 }

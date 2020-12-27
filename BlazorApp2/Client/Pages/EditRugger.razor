@@ -1,0 +1,45 @@
+﻿@using AspNetMonsters.Blazor.Geolocation
+@using BlazorApp2.Shared
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@page "/editrugger"
+<h3>Edit your Profile</h3>
+<EditForm Model="@myInfo" OnValidSubmit="@UpdateNameAsync">
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="name">Change your name</label>
+        <InputText class="form-control" id="name" @bind-Value="@myInfo.MyName" />
+    </div>
+    <div class="form-group">
+        <label for="bio">Change your bio</label>
+        <InputTextArea class="form-control" id="bio" @bind-Value="@myInfo.MyBio" />
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+
+</EditForm>
+@code {
+    string guidstring = string.Empty;
+    MyInfo myInfo = new MyInfo();
+
+    protected override async Task OnInitializedAsync()
+    {
+        guidstring = await localStorage.GetItemAsync<string>("guid");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guidstring}");
+    }
+    private async Task UpdateNameAsync()
+    {
+        if (!string.IsNullOrEmpty(myInfo.MyName))
+        {
+            var args = new UpdateRuggerArgs();
+            args.MyName = myInfo.MyName;
+            args.MyGuid = Guid.Parse(guidstring);
+            args.Bio = myInfo.MyBio;
+            await Http.PostAsJsonAsync("Name", args);
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

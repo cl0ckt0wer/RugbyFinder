@@ -24,7 +24,7 @@
 
             <div class="form-group mb-2">
                 <label for="message" class="sr-only">Type a message:</label>
-                <InputText placeholder="✍️" class="form-control form-control-plaintext border-bottom" id="message" @bind-Value="Messagetosend" />
+                <InputText placeholder="Type here..." class="form-control form-control-plaintext border-bottom" id="message" @bind-Value="Messagetosend" />
             </div>
             <button class="btn btn-primary mb-2" type="submit">Send</button>
         </EditForm>
@@ -68,7 +68,7 @@
         a.Message = Messagetosend;
         await Http.PostAsJsonAsync("/ruggermessage", a);
         messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{guidstring}/{Id}");
-
+        Messagetosend = string.Empty;
     }
     protected async Task SendIfEnter(KeyboardEventArgs args)
     {
