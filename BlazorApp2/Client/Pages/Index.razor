@@ -8,31 +8,28 @@
 
 @page "/"
 
-
-@if (debug)
-{
 <div class="container-fluid">
     <div class="card">
         <div class="card-header">
             @myInfo.MyTeam.TeamBio
         </div>
         @if (!string.IsNullOrEmpty(myInfo.MyImageURI))
-            {
-        <img id="profilepic" src="@imageDataUri" class="card-img-top" />
-            }
+        {
+            <img id="profilepic" src="@imageDataUri" class="card-img-top" />
+        }
         <div class="card-body">
 
             @if (string.IsNullOrEmpty(myInfo.MyName))
-                {
-            <h5>Please enter a name</h5>
-                }
-                else
-                {
-            <h2>@myInfo.MyName </h2>
-            <h6 class="card-subtitle mb-2 text-muted">@myInfo.MyTeam.TeamName</h6>
-            <p class="card-text">@myInfo.MyBio</p>
-            <a href="/teamprofile/@myInfo.MyTeam.TeamId" class="card-link">Team Profile</a>
-                }
+            {
+                <h5>Please enter a name</h5>
+            }
+            else
+            {
+                <h2>@myInfo.MyName </h2>
+                <h6 class="card-subtitle mb-2 text-muted">@myInfo.MyTeam.TeamName</h6>
+                <p class="card-text">@myInfo.MyBio</p>
+                <a href="/teamprofile/@myInfo.MyTeam.TeamId" class="card-link">Team Profile</a>
+            }
         </div>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">@closestCity.City</li>
@@ -86,11 +83,12 @@
             <button @onclick="EditPicture" class="btn btn-primary">Edit Picture</button>
         </div>
         @if (tm.TeamId != Guid.Empty)
-            {
-        <div class="col">
-            <button @onclick="EditMyTeam" class="btn btn-primary">Edit My Team</button>
-        </div>
-            }
+        {
+            <div class="col">
+                <button @onclick="EditMyTeam" class="btn btn-primary">Edit My Team</button>
+            </div>
+        }
+      
     </div>
 </div>
 
@@ -100,18 +98,14 @@
     🏉🏉🏉🏉🏉
 </p>
 
-            <button class="btn btn-primary" type="submit">Submit</button>
-        </EditForm>
-        <div class="@UpdateAvailable alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>New update</strong> Please rstart the app
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    }
-}
-else
-{ <h1>Loading...</h1>}
+
+<div class="@UpdateAvailable alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>New update</strong> Please rstart the app
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
 
 
 
@@ -162,7 +156,8 @@ else
         args.Lng = (double)location.Longitude;
         var response = await Http.PostAsJsonAsync("City", args);
         myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
-        if (!string.IsNullOrEmpty(myInfo.MyName))
+        string test = myInfo.MyName;
+        if (!string.IsNullOrEmpty(test))
         {
             teambuttondisabled = false;
         }
@@ -173,10 +168,10 @@ else
         }
         tm = await Http.GetFromJsonAsync<TeamPostModel>($"teamowner/{guid}");
         cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
-        var iua = await JS.InvokeAsync<bool>("isUpdateAvailable");
+        var iua = await JS.InvokeAsync<bool>("testStuff");
         if (iua)
         {
-            UpdateAvailable = string.Empty;
+            UpdateAvailable = "";
         }
     }
     private async Task UpdateNameAsync()

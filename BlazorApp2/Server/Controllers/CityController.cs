@@ -32,7 +32,7 @@ namespace BlazorApp2.Server.Controllers
             string sql = "Proc_GetClosestCity";
             using (var cnn = new SqlConnection(_cstring.ConnectionString))
             {
-                var city = await cnn.QueryFirstOrDefaultAsync<CityInfo>(sql, new { geo = g, ui = args.MyGuid }
+                var city = await cnn.QueryFirstAsync<CityInfo>(sql, new { geo = g, ui = args.MyGuid }
                     , commandType: CommandType.StoredProcedure).ConfigureAwait(false);
                 return city;
             }
