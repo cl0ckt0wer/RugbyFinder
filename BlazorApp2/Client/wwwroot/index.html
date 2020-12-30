@@ -8,18 +8,20 @@
     <base href="/" />
 
     <script>
-        window.testStuff = () => {
+        window.CheckWaitingServiceWorker = () => {
            
             return navigator.serviceWorker.getRegistration().then((reg) => {
                 console.log(reg);
                 if (reg.waiting) {
+                    window.ReloadServiceWorker()
+                  
                     return true;
+                    
                 }
                 else {
                     return false;
                 }
             });
-            
         }
         window.ReloadServiceWorker = () => {
             navigator.serviceWorker.getRegistration().then((reg) => {

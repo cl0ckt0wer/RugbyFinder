@@ -174,8 +174,7 @@
         }
         tm = await Http.GetFromJsonAsync<TeamPostModel>($"teamowner/{guid}");
         cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
-        var iua = await JS.InvokeAsync<bool>("testStuff");
-   
+        var iua = await JS.InvokeAsync<bool>("CheckWaitingServiceWorker");
         if (iua)
         {
             UpdateAvailable = "";
