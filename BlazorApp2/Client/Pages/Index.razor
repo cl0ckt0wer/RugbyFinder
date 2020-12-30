@@ -9,26 +9,29 @@
 @page "/"
 
 <div class="container-fluid">
+    <div class="alert alert-info" role="alert">
+        Welcome to the open Alpha of Ruckr! Find rugby players and teams near you. Don't see your team? Make it! Issues? <a href="mailto:admin@ruckr.fun">admin@ruckr.fun</a>
+    </div>
     <div class="card">
         <div class="card-header">
             @myInfo.MyTeam.TeamBio
         </div>
         @if (!string.IsNullOrEmpty(myInfo.MyImageURI))
         {
-            <img id="profilepic" src="@imageDataUri" class="card-img-top" />
+        <img id="profilepic" src="@imageDataUri" class="card-img-top" />
         }
         <div class="card-body">
 
             @if (string.IsNullOrEmpty(myInfo.MyName))
             {
-                <h5>Please enter a name</h5>
+            <h5>Please enter a name</h5>
             }
             else
             {
-                <h2>@myInfo.MyName </h2>
-                <h6 class="card-subtitle mb-2 text-muted">@myInfo.MyTeam.TeamName</h6>
-                <p class="card-text">@myInfo.MyBio</p>
-                <a href="/teamprofile/@myInfo.MyTeam.TeamId" class="card-link">Team Profile</a>
+            <h2>@myInfo.MyName </h2>
+            <h6 class="card-subtitle mb-2 text-muted">@myInfo.MyTeam.TeamName</h6>
+            <p class="card-text">@myInfo.MyBio</p>
+            <a href="/teamprofile/@myInfo.MyTeam.TeamId" class="card-link">Team Profile</a>
             }
         </div>
         <ul class="list-group list-group-flush">
