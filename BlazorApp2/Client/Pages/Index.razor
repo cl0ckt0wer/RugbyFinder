@@ -88,7 +88,13 @@
                 <button @onclick="EditMyTeam" class="btn btn-primary">Edit My Team</button>
             </div>
         }
-      
+        @if (UpdateAvailable.Length == 0)
+        {
+            <div class="col">
+                <button @onclick="Reload" class="btn btn-outline-danger">Update App</button>
+            </div>
+        }
+
     </div>
 </div>
 
@@ -100,7 +106,7 @@
 
 
 <div class="@UpdateAvailable alert alert-warning alert-dismissible fade show" role="alert">
-    <strong>New update</strong> Please restart the app
+    <strong>New update</strong> Please restart the app @Test1
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -126,6 +132,7 @@
     TeamPostModel tm = new TeamPostModel();
     IEnumerable<CityInfo> cityInfos = new CityInfo[0];
     public string UpdateAvailable { get; set; } = "d-none";
+    public string Test1 { get; set; } = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -156,8 +163,7 @@
         args.Lng = (double)location.Longitude;
         var response = await Http.PostAsJsonAsync("City", args);
         myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
-        string test = myInfo.MyName;
-        if (!string.IsNullOrEmpty(test))
+        if (!string.IsNullOrEmpty(myInfo.MyName))
         {
             teambuttondisabled = false;
         }
@@ -169,10 +175,12 @@
         tm = await Http.GetFromJsonAsync<TeamPostModel>($"teamowner/{guid}");
         cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
         var iua = await JS.InvokeAsync<bool>("testStuff");
+   
         if (iua)
         {
             UpdateAvailable = "";
         }
+      
     }
     private async Task UpdateNameAsync()
     {
@@ -185,8 +193,6 @@
             await Http.PostAsJsonAsync("Name", args);
             teambuttondisabled = false;
         }
-
-
     }
     private async Task UpdateTeamAsync()
     {
@@ -232,5 +238,10 @@
     private void EditMyTeam()
     {
         NavigationManager.NavigateTo("/editmyteam");
+    }
+    private async Task Reload()
+    {
+        await JS.InvokeVoidAsync("ReloadServiceWorker");
+
     }
 }

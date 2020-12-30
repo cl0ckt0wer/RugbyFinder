@@ -10,18 +10,30 @@
     <script>
         window.testStuff = () => {
            
-            navigator.serviceWorker.getRegistrations().then((message) => {
-                console.log(message);
-                message.forEach(m => {
-                    if (m.waiting == true) {
-                        return true;
-                    }
-                });
+            return navigator.serviceWorker.getRegistration().then((reg) => {
+                console.log(reg);
+                if (reg.waiting) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
             });
-         
-            return false;
+            
         }
-       
+        window.ReloadServiceWorker = () => {
+            navigator.serviceWorker.getRegistration().then((reg) => {
+                if (reg.waiting) {
+                    reg.waiting.postMessage({
+                        type: 'skipWaiting',
+                    });
+                }
+                else {
+                    console.log("App already updated"); 
+                }
+            });
+            location.reload();
+        }
     </script>
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
