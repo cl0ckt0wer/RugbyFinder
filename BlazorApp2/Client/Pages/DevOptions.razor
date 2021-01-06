@@ -1,0 +1,38 @@
+﻿@page "/dev"
+@using BlazorApp2.Shared
+@using AspNetMonsters.Blazor.Geolocation
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager MyNavigationManager
+
+
+<div class="container">
+    <button class="btn btn-primary" @onclick="MyThrowException">Throw Exception</button>
+</div>
+
+@code {
+    public string MyGuid { get; set; } = "";
+
+    public async Task MyThrowException()
+    {
+        try
+        {
+            MyGuid = await localStorage.GetItemAsync<string>("guid");
+            throw new Exception();
+        }
+        catch (Exception ex)
+
+        {
+            var ags = new ExceptionArgs()
+            {
+                Myexception = ex.InnerException + ex.Message + ex.Source + ex.StackTrace,
+                MyGuid = Guid.Parse(MyGuid)
+            };
+
+
+            await Http.PostAsJsonAsync("Exception", ags);
+            throw;
+        }
+    }
+}

@@ -9,14 +9,14 @@
 
     <script>
         window.CheckWaitingServiceWorker = () => {
-           
+
             return navigator.serviceWorker.getRegistration().then((reg) => {
                 console.log(reg);
                 if (reg.waiting) {
                     window.ReloadServiceWorker()
-                  
+
                     return true;
-                    
+
                 }
                 else {
                     return false;
@@ -31,7 +31,7 @@
                     });
                 }
                 else {
-                    console.log("App already updated"); 
+                    console.log("App already updated");
                 }
             });
             location.reload();
@@ -46,7 +46,7 @@
 </head>
 
 <body>
-    <div id="app">Loading...</div>
+    <div id="app">Loading... Alpha 1</div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
@@ -54,10 +54,11 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
-    <script src="Location.js"> </script>
+    <script src="Location.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
-    <script>        window.onload = (() => {
-            CheckWaitingServiceWorker().then((x) => { console.log(x) }  );
+    <script>
+    window.onload = (() => {
+            CheckWaitingServiceWorker().then((x) => { console.log("windowonload check worker") });
         });
     </script>
 </body>

@@ -143,46 +143,56 @@
 
         await Task.Delay(5000);
 #endif
-        location = await LocationService.GetLocationAsync();
-        guidstring = await localStorage.GetItemAsync<string>("guid");
-        if (string.IsNullOrEmpty(guidstring))
+        try
         {
-            guid = Guid.NewGuid();
-            await localStorage.SetItemAsync("guid", guid.ToString());
-            guidstring = guid.ToString();
-        }
-        else
-        {
-            if (!Guid.TryParse(guidstring, out guid))
+            location = await LocationService.GetLocationAsync();
+            guidstring = await localStorage.GetItemAsync<string>("guid");
+            if (string.IsNullOrEmpty(guidstring))
             {
                 guid = Guid.NewGuid();
                 await localStorage.SetItemAsync("guid", guid.ToString());
                 guidstring = guid.ToString();
             }
+            else
+            {
+                if (!Guid.TryParse(guidstring, out guid))
+                {
+                    guid = Guid.NewGuid();
+                    await localStorage.SetItemAsync("guid", guid.ToString());
+                    guidstring = guid.ToString();
+                }
+            }
+            var args = new CityInfoArgs();
+            args.MyGuid = guid;
+            args.Lat = (double)location.Latitude;
+            args.Lng = (double)location.Longitude;
+            var response = await Http.PostAsJsonAsync("City", args);
+            myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
+            if (!string.IsNullOrEmpty(myInfo.MyName))
+            {
+                teambuttondisabled = false;
+            }
+            closestCity = await response.Content.ReadFromJsonAsync<CityInfo>();
+            if (myInfo.ProfilePic != null && myInfo.ProfilePic.Length > 0)
+            {
+                imageDataUri = $"data:{format};base64,{Convert.ToBase64String(myInfo.ProfilePic)}";
+            }
+            tm = await Http.GetFromJsonAsync<TeamPostModel>($"teamowner/{guid}");
+            cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
+            var iua = await JS.InvokeAsync<bool>("CheckWaitingServiceWorker");
+            if (iua)
+            {
+                UpdateAvailable = "";
+            }
         }
-        var args = new CityInfoArgs();
-        args.MyGuid = guid;
-        args.Lat = (double)location.Latitude;
-        args.Lng = (double)location.Longitude;
-        var response = await Http.PostAsJsonAsync("City", args);
-        myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
-        if (!string.IsNullOrEmpty(myInfo.MyName))
+        catch (Exception ex)
         {
-            teambuttondisabled = false;
+            await Http.PostAsJsonAsync("Exception", ex);
+            throw;
         }
-        closestCity = await response.Content.ReadFromJsonAsync<CityInfo>();
-        if (myInfo.ProfilePic != null && myInfo.ProfilePic.Length > 0)
-        {
-            imageDataUri = $"data:{format};base64,{Convert.ToBase64String(myInfo.ProfilePic)}";
-        }
-        tm = await Http.GetFromJsonAsync<TeamPostModel>($"teamowner/{guid}");
-        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
-        var iua = await JS.InvokeAsync<bool>("CheckWaitingServiceWorker");
-        if (iua)
-        {
-            UpdateAvailable = "";
-        }
-      
+
+
+
     }
     private async Task UpdateNameAsync()
     {
