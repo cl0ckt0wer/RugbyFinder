@@ -15,6 +15,7 @@ namespace BlazorApp2.Shared
         public CityInfo City { get; set; } = new CityInfo();
         public byte[] TeamPic { get; set; } = new byte[0];
         public Guid TeamOwner { get; set; } = Guid.Empty;
+        public int Playercount { get; set; }
         public string TeamImageURI { get
             {
                 if(TeamPic.Length > 0)
