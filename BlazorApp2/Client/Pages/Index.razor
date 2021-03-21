@@ -1,5 +1,6 @@
 ﻿@using AspNetMonsters.Blazor.Geolocation
 @using BlazorApp2.Shared
+@using BlazorApp2.Shared.Model.Return
 @inject LocationService  LocationService
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -14,6 +15,7 @@
     </div>
     <div class="card">
         <div class="card-header">
+            @Key
             @myInfo.MyTeam.TeamBio
         </div>
         @if (!string.IsNullOrEmpty(myInfo.MyImageURI))
@@ -72,6 +74,7 @@
 
         </div>*@
 </div>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col">
@@ -136,6 +139,7 @@
     IEnumerable<CityInfo> cityInfos = new CityInfo[0];
     public string UpdateAvailable { get; set; } = "d-none";
     public string Test1 { get; set; } = "";
+    public string Key { get; set; } = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -145,27 +149,35 @@
 #endif
         try
         {
+            Key = await localStorage.GetItemAsync<string>("key");
+            if (string.IsNullOrEmpty(Key))
+            {
+                //get a new key and save it
+                var ret = await Http.GetFromJsonAsync<KeyGenReturnModel>("KeyGen/GetNewKey");
+                await localStorage.SetItemAsync("key", ret.Key);
+                Key = ret.Key;
+            }
             location = await LocationService.GetLocationAsync();
-            guidstring = await localStorage.GetItemAsync<string>("guid");
-            if (string.IsNullOrEmpty(guidstring))
-            {
-                guid = Guid.NewGuid();
-                await localStorage.SetItemAsync("guid", guid.ToString());
-                guidstring = guid.ToString();
-            }
-            else
-            {
-                if (!Guid.TryParse(guidstring, out guid))
-                {
-                    guid = Guid.NewGuid();
-                    await localStorage.SetItemAsync("guid", guid.ToString());
-                    guidstring = guid.ToString();
-                }
-            }
+            //guidstring = await localStorage.GetItemAsync<string>("guid");
+            //if (string.IsNullOrEmpty(guidstring))
+            //{
+            //    guid = Guid.NewGuid();
+            //    await localStorage.SetItemAsync("guid", guid.ToString());
+            //    guidstring = guid.ToString();
+            //}
+            //else
+            //{
+            //    if (!Guid.TryParse(guidstring, out guid))
+            //    {
+            //        guid = Guid.NewGuid();
+            //        await localStorage.SetItemAsync("guid", guid.ToString());
+            //        guidstring = guid.ToString();
+            //    }
+            //}
             var args = new CityInfoArgs();
-            args.MyGuid = guid;
             args.Lat = (double)location.Latitude;
             args.Lng = (double)location.Longitude;
+            args.Key = Key;
             var response = await Http.PostAsJsonAsync("City", args);
             myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
             if (!string.IsNullOrEmpty(myInfo.MyName))

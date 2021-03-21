@@ -109,6 +109,8 @@
     <Build Include="dbo\Stored Procedures\Proc_GetRuggerMessage.sql" />
     <Build Include="dbo\Stored Procedures\Proc_InsertRuggerMessage.sql" />
     <Build Include="dbo\Tables\Exceptions.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_RegisterNewKey.sql" />
+    <Build Include="dbo\Tables\KeyGuid.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Messaging.publish.xml" />
