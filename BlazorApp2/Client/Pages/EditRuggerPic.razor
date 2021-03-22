@@ -14,12 +14,12 @@
 </div>
 @code {
     string format = "image/png";
-    string guidstring = string.Empty;
+    public string Key { get; set; }
     MyInfo myInfo = new MyInfo();
     protected override async Task OnInitializedAsync()
     {
-        guidstring = await localStorage.GetItemAsync<string>("guid");
-        myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guidstring}");
+        Key = await localStorage.GetItemAsync<string>("key");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{Key}");
 
     }
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
@@ -28,7 +28,7 @@
         using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
         var buffer = new byte[stream.Length];
         await stream.ReadAsync(buffer);
-        var args = new RuggerPic() { Pic = buffer, RuggerId = Guid.Parse(guidstring) };
+        var args = new RuggerPic() { Pic = buffer, RuggerKey = Key};
         await Http.PostAsJsonAsync("RuggerPic", args);
         NavigationManager.NavigateTo("/");
     }

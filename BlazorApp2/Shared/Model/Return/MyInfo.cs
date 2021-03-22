@@ -20,5 +20,7 @@ namespace BlazorApp2.Shared
                 return string.Empty;
             }
         }
+        public CityInfo ClosestCity { get; set; }
+        public Guid TeamOwned { get; set; } = Guid.Empty;
     }
 }

@@ -1,5 +1,10 @@
-﻿CREATE PROC Proc_UpsertName  @id uniqueidentifier, @name nvarchar(50), @bio nvarchar(max)
+﻿CREATE PROC Proc_UpsertName  @key varchar(64), @name nvarchar(50), @bio nvarchar(max)
 AS 
+    DECLARE @ID UNIQUEIDENTIFIER;
+    SELECT @ID = Id
+    FROM KeyGuid
+    WHERE [Key] = @key;
+
     MERGE dbo.RuggerName AS target  
     USING (SELECT @id, @name, @bio) AS source (Id, Name, Bio)  
     ON (target.Id = source.ID)  

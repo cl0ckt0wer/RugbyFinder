@@ -26,13 +26,14 @@ namespace BlazorApp2.Server.Controllers
             return View();
         }
         [HttpPost]
+        [Obsolete("This method is obsolete. Use MyProfile instead.", false)]
         public async Task<CityInfo> PostCityAsync(CityInfoArgs args)
         {
             var g = SqlGeography.Point(args.Lat, args.Lng, 4326);
             string sql = "Proc_GetClosestCity";
             using (var cnn = new SqlConnection(_cstring.ConnectionString))
             {
-                var city = await cnn.QueryFirstAsync<CityInfo>(sql, new { geo = g, ui = args.MyGuid }
+                var city = await cnn.QueryFirstAsync<CityInfo>(sql, new { geo = g, key = args.Key }
                     , commandType: CommandType.StoredProcedure).ConfigureAwait(false);
                 return city;
             }

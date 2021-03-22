@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[Proc_GetMyInfo]
-	@Uid uniqueidentifier
+	@key varchar(64)
 	--@Name NVARCHAR(50) OUT,
 	--@Bio NVARCHAR(MAX) OUT,
 	--@TeamName nvarchar(200) OUT,
@@ -7,6 +7,10 @@
 	--@ProfilePic VARBINARY(MAX) OUT
 AS
 	SET NOCOUNT ON;
+	DECLARE @UID UNIQUEIDENTIFIER;
+	SELECT @UID = Id
+	FROM KeyGuid
+	WHERE [Key] = @key;
 
 	SELECT TOP (1)  N.id AS MyId
 	,COALESCE(N.Name, '') AS [MyName] 

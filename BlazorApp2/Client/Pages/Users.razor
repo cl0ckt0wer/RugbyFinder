@@ -27,17 +27,12 @@
     protected override async Task OnInitializedAsync()
     {
         var location = await LocationService.GetLocationAsync();
-        var guidstring = await localStorage.GetItemAsync<string>("guid");
+        var key = await localStorage.GetItemAsync<string>("key");
 
-        var myguid = Guid.Parse(guidstring);
-        var newcityinfoargs = new CityInfoArgs()
-        {
-            Lat = (double)location.Latitude,
-            Lng = (double)location.Longitude,
-            MyGuid = myguid
-        };
-        var response = await Http.PostAsJsonAsync("Ruggers", newcityinfoargs);
-        ruggers = (await response.Content.ReadFromJsonAsync<IEnumerable<ClosestRuggers>>()).ToArray();
+    
+        ruggers = (await Http.GetFromJsonAsync<IEnumerable<ClosestRuggers>>($"Ruggers/{key}/{location.Latitude}/{location.Longitude}" ))
+            .ToArray();
+        //ruggers = (await response.Content.ReadFromJsonAsync<IEnumerable<ClosestRuggers>>()).ToArray();
 
     }
     protected string DefaultIfNone(string img)

@@ -24,15 +24,15 @@ namespace BlazorApp2.Server.Controllers
             sqlConnectionStringBuilder = new SqlConnectionStringBuilder(configuration.GetConnectionString("MessagingDatabase"));
         }
        
-        [HttpPost]
-        public async Task<IEnumerable<ClosestRuggers>> RuggersAsync(CityInfoArgs newcityinfoargs)
+        [HttpGet("{key:string}/{lat:double}/{lng:double}")]
+        public async Task<IEnumerable<ClosestRuggers>> RuggersAsync(string key, double lat, double lng)
         {
-            var g = SqlGeography.Point(newcityinfoargs.Lat, newcityinfoargs.Lng, 4326);
+            var geo = SqlGeography.Point(lat, lng, 4326);
 
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {
                 var sql = "Proc_GetClosestRuggers";
-                var ret = await conn.QueryAsync<ClosestRuggers>(sql, new { geo = g, ui = newcityinfoargs.MyGuid }, commandType: CommandType.StoredProcedure);
+                var ret = await conn.QueryAsync<ClosestRuggers>(sql, new { geo, key }, commandType: CommandType.StoredProcedure);
                 return ret;
             }
 

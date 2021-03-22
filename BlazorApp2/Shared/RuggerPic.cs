@@ -8,7 +8,7 @@ namespace BlazorApp2.Shared
 {
     public class RuggerPic
     {
-        public Guid RuggerId { get; set;  }
+        public string RuggerKey { get; set;  }
         public byte[] Pic { get; set; }
     }
 }

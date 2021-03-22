@@ -6,6 +6,6 @@ namespace BlazorApp2.Shared
     {
         public double Lat { get; set; }
         public double Lng { get; set; }
-        public Guid MyGuid { get; set; }
+        public string  Key { get; set; }
     }
 }

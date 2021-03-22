@@ -30,7 +30,7 @@ namespace BlazorApp2.Server.Controllers
             var sql = "Proc_UpsertRuggerPic";
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {
-                await conn.ExecuteAsync(sql, new { u = pic.RuggerId, b = pic.Pic }, commandType: CommandType.StoredProcedure);
+                await conn.ExecuteAsync(sql, new { key = pic.RuggerKey, b = pic.Pic }, commandType: CommandType.StoredProcedure);
             }
             return Accepted();
         }

@@ -22,13 +22,13 @@
 
 </EditForm>
 @code {
-    string guidstring = string.Empty;
+    public string Key { get; set; }
     MyInfo myInfo = new MyInfo();
 
     protected override async Task OnInitializedAsync()
     {
-        guidstring = await localStorage.GetItemAsync<string>("guid");
-        myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guidstring}");
+        Key = await localStorage.GetItemAsync<string>("key");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{Key}");
     }
     private async Task UpdateNameAsync()
     {
@@ -36,7 +36,7 @@
         {
             var args = new UpdateRuggerArgs();
             args.MyName = myInfo.MyName;
-            args.MyGuid = Guid.Parse(guidstring);
+            args.Key = Key;
             args.Bio = myInfo.MyBio;
             await Http.PostAsJsonAsync("Name", args);
             NavigationManager.NavigateTo("/");
