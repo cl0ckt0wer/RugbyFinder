@@ -11,7 +11,7 @@
 @page "/"
 
 <div class="container-fluid">
-    
+
     <div class="alert alert-info" role="alert">
         Welcome to the open Alpha of Ruckr! Find rugby players and teams near you. Don't see your team? Make it! Issues? <a href="mailto:admin@ruckr.fun">admin@ruckr.fun</a>
     </div>
@@ -84,13 +84,17 @@
 
         </div>
         <div class="col">
-            <button @onclick="PickATeam" class="btn btn-primary" href="/teampicker" role="button" disabled="@teambuttondisabled">Pick a Team</button>
+
             @if (String.IsNullOrEmpty(myInfo?.MyName))
             {
-                @teambuttondisabled = false;
+
                 <div class="alert alert-danger" role="alert">
-                   Please fill out your profile before selecting a team.
+                    Please fill out your profile before selecting a team.
                 </div>
+            }
+            else
+            {
+                <button @onclick="PickATeam" class="btn btn-primary" href="/teampicker" role="button">Pick a Team</button>
             }
 
 
@@ -144,7 +148,7 @@
     bool debug = true;
     //string imageDataUri = "";
     string format = "image/png";
-    bool teambuttondisabled = true;
+    //bool teambuttondisabled = true;
     //TeamPostModel tm = new TeamPostModel();
     //IEnumerable<CityInfo> cityInfos = new CityInfo[0];
     public string UpdateAvailable { get; set; } = "d-none";
@@ -160,12 +164,14 @@
         try
         {
             Key = await localStorage.GetItemAsync<string>("key");
-            if (string.IsNullOrEmpty(Key))
+            Console.WriteLine($"Key pre-key is {Key}");
+            if (string.IsNullOrEmpty(Key) || Key == "null")
             {
                 //get a new key and save it
-                var ret = await Http.GetFromJsonAsync<KeyGenReturnModel>("KeyGen/GetNewKey");
+                var ret = await Http.GetFromJsonAsync<KeyGenReturnModel>("KeyGen");
                 await localStorage.SetItemAsync("key", ret.Key);
                 Key = ret.Key;
+                Console.WriteLine(ret.Key);
             }
             location = await LocationService.GetLocationAsync();
             //guidstring = await localStorage.GetItemAsync<string>("guid");
@@ -213,7 +219,10 @@
         }
         catch (Exception ex)
         {
-            await Http.PostAsJsonAsync("Exception", ex);
+            var eargs = new ExceptionArgs();
+            eargs.MyGuid = myInfo.MyId;
+            eargs.Myexception = ex.Message;
+            await Http.PostAsJsonAsync("Exception", eargs);
             throw;
         }
 
@@ -229,7 +238,6 @@
             args.Key = Key;
             args.Bio = myInfo.MyBio;
             await Http.PostAsJsonAsync("MyProfile/UpdateProfile", args);
-            //teambuttondisabled = false;
         }
     }
     //private async Task UpdateTeamAsync()

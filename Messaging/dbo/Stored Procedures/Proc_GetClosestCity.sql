@@ -6,7 +6,7 @@
 CREATE PROCEDURE [dbo].[Proc_GetClosestCity] 
 	-- Add the parameters for the stored procedure here
 	@geo geography,
-	@key uniqueidentifier
+	@key varchar(64)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

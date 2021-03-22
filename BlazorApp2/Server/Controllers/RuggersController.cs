@@ -24,7 +24,7 @@ namespace BlazorApp2.Server.Controllers
             sqlConnectionStringBuilder = new SqlConnectionStringBuilder(configuration.GetConnectionString("MessagingDatabase"));
         }
        
-        [HttpGet("{key:string}/{lat:double}/{lng:double}")]
+        [HttpGet("{key}/{lat:double}/{lng:double}")]
         public async Task<IEnumerable<ClosestRuggers>> RuggersAsync(string key, double lat, double lng)
         {
             var geo = SqlGeography.Point(lat, lng, 4326);

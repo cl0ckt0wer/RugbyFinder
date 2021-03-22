@@ -20,6 +20,7 @@ namespace BlazorApp2.Server.Controllers
         {
             sqlConnectionStringBuilder = new SqlConnectionStringBuilder(configuration.GetConnectionString("MessagingDatabase"));
         }
+        [HttpPost]
         public async Task PostExeceptionAsync(ExceptionArgs ex)
         {
             var sql = @"INSERT INTO dbo.Exceptions (SourceGuid, ExString)

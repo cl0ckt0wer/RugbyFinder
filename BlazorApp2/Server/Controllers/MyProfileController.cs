@@ -22,8 +22,8 @@ namespace BlazorApp2.Server.Controllers
         {
             _cstring = new SqlConnectionStringBuilder(configuration.GetConnectionString("MessagingDatabase"));
         }
-        [HttpGet("{key:string}/{lat?:double}/{lng?:double}")]
-        public async Task MyProfileAsync(string key, double lat, double lng)
+        [HttpGet("{key}/{lat:double?}/{lng:double?}")]
+        public async Task<MyInfo> MyProfileAsync(string key, double lat, double lng)
         {
             var geo = SqlGeography.Point(lat, lng, 4326);
             using (var cnn = new SqlConnection(_cstring.ConnectionString))
@@ -42,7 +42,7 @@ namespace BlazorApp2.Server.Controllers
                 sql = "Proc_GetClosestCity";
                 myinfo.ClosestCity = await cnn.QueryFirstAsync<CityInfo>(sql, new { geo, key }
                     , commandType: CommandType.StoredProcedure).ConfigureAwait(false);
-
+                return myinfo;
             }
         }
         [HttpPut("[controller]/[action]")]
