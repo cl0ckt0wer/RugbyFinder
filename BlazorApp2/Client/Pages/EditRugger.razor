@@ -1,5 +1,6 @@
 ﻿@using AspNetMonsters.Blazor.Geolocation
 @using BlazorApp2.Shared
+@using System.Web;
 @inject LocationService  LocationService
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -9,9 +10,10 @@
 <EditForm Model="@myInfo" OnValidSubmit="@UpdateNameAsync">
 
     <DataAnnotationsValidator />
+    <CustomValidator @ref="customValidator" />
     <ValidationSummary />
     <div class="form-group">
-        <label for="name">Change your name</label>
+        <label for="name">Change your name (Must be at least 2 characters long)</label>
         <InputText class="form-control" id="name" @bind-Value="@myInfo.MyName" />
     </div>
     <div class="form-group">
@@ -24,15 +26,27 @@
 @code {
     public string Key { get; set; }
     MyInfo myInfo = new MyInfo();
+    private CustomValidator customValidator;
 
     protected override async Task OnInitializedAsync()
     {
         Key = await localStorage.GetItemAsync<string>("key");
-        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{Key}");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}");
     }
     private async Task UpdateNameAsync()
     {
-        if (!string.IsNullOrEmpty(myInfo.MyName))
+        customValidator.ClearErrors();
+        var errors = new Dictionary<string, List<string>>();
+        if (myInfo.MyName.Length < 2)
+        {
+            errors.Add(nameof(myInfo.MyName),
+           new List<string>() { "name must be at least 2 characters" });
+        }
+        if (errors.Count() > 0)
+        {
+            customValidator.DisplayErrors(errors);
+        }
+        else
         {
             var args = new UpdateRuggerArgs();
             args.MyName = myInfo.MyName;
@@ -41,5 +55,7 @@
             await Http.PostAsJsonAsync("Name", args);
             NavigationManager.NavigateTo("/");
         }
+
+
     }
 }

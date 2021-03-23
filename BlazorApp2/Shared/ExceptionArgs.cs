@@ -9,7 +9,7 @@ namespace BlazorApp2.Shared
     public class ExceptionArgs
     {
         public string Myexception { get; set; } = "";
+        public string Key { get; set; } = "";
         public Guid MyGuid { get; set; } = Guid.Empty;
-
     }
 }

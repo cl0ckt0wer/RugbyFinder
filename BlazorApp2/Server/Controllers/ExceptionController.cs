@@ -23,10 +23,16 @@ namespace BlazorApp2.Server.Controllers
         [HttpPost]
         public async Task PostExeceptionAsync(ExceptionArgs ex)
         {
+            var lookup = @"SELECT ID FROM dbo.KeyGuid WHERE [Key] = @key";
             var sql = @"INSERT INTO dbo.Exceptions (SourceGuid, ExString)
                         VALUES (@MyGuid, @Myexception)";
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {
+                if (ex.MyGuid == Guid.Empty && !string.IsNullOrEmpty(ex.Key))
+                {
+                    var x = conn.ExecuteScalar<Guid>(lookup, new { Key = ex.Key });
+                    ex.MyGuid = x;
+                }
                 _ = await conn.ExecuteAsync(sql, new { ex.MyGuid, ex.Myexception });
             }
         }

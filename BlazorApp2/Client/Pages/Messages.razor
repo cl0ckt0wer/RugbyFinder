@@ -1,5 +1,6 @@
 ﻿@using AspNetMonsters.Blazor.Geolocation
 @using BlazorApp2.Shared
+@using System.Web;
 @inject LocationService  LocationService
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -8,7 +9,7 @@
 <h3>Message Inbox</h3>
 @foreach (var f in inbox)
 {
-    <div class="card" >
+    <div class="card">
         <div class="card-body">
             <h5 class="card-title">@f.Name</h5>
             <h6 class="card-subtitle mb-2 text-muted">@f.LastMessage</h6>
@@ -17,10 +18,10 @@
         </div>
     </div>
 }
-@if(!inbox.Any())
-            {
-                <h3>You have no messages :(</h3>
-            }
+@if (!inbox.Any())
+{
+    <h3>You have no messages :(</h3>
+}
 
 
 @code {
@@ -41,7 +42,7 @@
         //    var x = ex;
         //}
 
-        inbox = await Http.GetFromJsonAsync<IEnumerable<InboxItem>>($"ruggerinbox/{Key}");
+        inbox = await Http.GetFromJsonAsync<IEnumerable<InboxItem>>($"ruggerinbox/{HttpUtility.UrlEncode(Key)}");
 
     }
 }

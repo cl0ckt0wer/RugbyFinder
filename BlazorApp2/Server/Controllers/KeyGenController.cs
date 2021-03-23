@@ -8,7 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text.Encodings.Web;
+using System.Web;
 using System.Threading.Tasks;
 
 namespace BlazorApp2.Server.Controllers
@@ -30,7 +30,7 @@ namespace BlazorApp2.Server.Controllers
                 generator.GetBytes(key);
             string apiKey = Convert.ToBase64String(key);
           
-            apiKey = HtmlEncoder.Default.Encode(apiKey);
+          
             var sql = "Proc_RegisterNewKey";
             using (var conn = new SqlConnection(_cstring.ConnectionString))
             {

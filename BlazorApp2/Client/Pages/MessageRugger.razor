@@ -1,5 +1,6 @@
 ﻿@using AspNetMonsters.Blazor.Geolocation
 @using BlazorApp2.Shared
+@using System.Web;
 @inject LocationService  LocationService
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
@@ -20,14 +21,14 @@
     </div>
 
     <div class="row">
-    
 
-            <div class="form-group mb-2">
-                <label for="message" class="sr-only">Type a message:</label>
-                <input placeholder="Type here..." class="form-control form-control-plaintext border-bottom" id="message" @bind="Messagetosend" />
-            </div>
-            <button class="btn btn-primary mb-2" @onclick="@HandleSendMessage">Send</button>
-      
+
+        <div class="form-group mb-2">
+            <label for="message" class="sr-only">Type a message:</label>
+            <input placeholder="Type here..." class="form-control form-control-plaintext border-bottom" id="message" @bind="Messagetosend" />
+        </div>
+        <button class="btn btn-primary mb-2" @onclick="@HandleSendMessage">Send</button>
+
     </div>
     <div class="row">
         <ul class="list-group">
@@ -39,8 +40,8 @@
     </div>
 </div>
 @code {
-        [Parameter]
-        public Guid Id { get; set; }
+    [Parameter]
+    public Guid Id { get; set; }
     public string Key { get; set; }
     public IEnumerable<RuggerMessageModel> messModel = new RuggerMessageModel[0];
     public string Messagetosend { get; set; } = string.Empty;
@@ -49,10 +50,10 @@
     {
         //get pending messages
         Key = await localStorage.GetItemAsync<string>("key");
-       
-  
 
-        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{Key}/{Id}");
+
+
+        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{HttpUtility.UrlEncode(Key)}/{Id}");
         ruggerInfo = await Http.GetFromJsonAsync<ProfileInfo>($"profile/{Id}");
     }
     protected async Task HandleSendMessage()
@@ -62,7 +63,7 @@
         a.TheirGuid = Id;
         a.Message = Messagetosend;
         await Http.PostAsJsonAsync("/ruggermessage", a);
-        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{Key}/{Id}");
+        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{HttpUtility.UrlEncode(Key)}/{Id}");
         Messagetosend = string.Empty;
     }
     protected async Task SendIfEnter(KeyboardEventArgs args)

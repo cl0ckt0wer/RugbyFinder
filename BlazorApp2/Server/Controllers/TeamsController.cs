@@ -29,6 +29,8 @@ namespace BlazorApp2.Server.Controllers
         [HttpGet("{key}")]
         public async Task<IEnumerable<TeamModel>> TeamsAsync(string key)
         {
+            key = key.Replace("%2f", "%2F").Replace("%2F", "/");
+
             var sql = "Proc_GetClosestTeamsByRugger";
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {

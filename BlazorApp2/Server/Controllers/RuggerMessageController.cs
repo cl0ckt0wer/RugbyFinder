@@ -23,6 +23,8 @@ namespace BlazorApp2.Server.Controllers
         [HttpGet("{key}/{theirid:guid}")]
         public async Task<IEnumerable<RuggerMessageModel>> GetRuggerMessageAsync(string key, Guid theirid)
         {
+            key = key.Replace("%2f", "%2F").Replace("%2F", "/");
+
             var sql = "Proc_GetRuggerMessage";
             using (var conn = new SqlConnection(_cstring.ConnectionString))
             {

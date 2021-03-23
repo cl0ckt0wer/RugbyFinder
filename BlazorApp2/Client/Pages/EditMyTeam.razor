@@ -1,5 +1,6 @@
 ﻿@using AspNetMonsters.Blazor.Geolocation
 @using BlazorApp2.Shared
+@using System.Web;
 @inject LocationService  LocationService
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -52,8 +53,8 @@
     protected override async Task OnInitializedAsync()
     {
         Key = await localStorage.GetItemAsync<string>("key");
-        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{Key}");
-        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{Key}");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}");
+        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{HttpUtility.UrlEncode(Key)}");
         Console.WriteLine("does this cast work");
         Team = await Http.GetFromJsonAsync<TeamModel>($"TeamProfile/{myInfo.TeamOwned}");
         Console.WriteLine("cAST COMPLETE");

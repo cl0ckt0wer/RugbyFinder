@@ -2,6 +2,8 @@
 @using BlazorApp2.Shared
 @using BlazorApp2.Shared.Model.Return
 @using BlazorApp2.Shared.Model.Args
+@using System.Web;
+
 @inject LocationService  LocationService
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -163,8 +165,8 @@
         try
         {
             Key = await localStorage.GetItemAsync<string>("key");
-            Console.WriteLine($"Key pre-key is {Key}");
-            if (string.IsNullOrEmpty(Key) || Key == "null")
+            Console.WriteLine($"Key pre-key is -{Key}-");
+            if (Key == null || Key == "null" || Key == "")
             {
                 //get a new key and save it
                 var ret = await Http.GetFromJsonAsync<KeyGenReturnModel>("KeyGen");
@@ -196,8 +198,11 @@
 
             //var response = await Http.PostAsJsonAsync("City", args);
             //myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
-            myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{Key}/{location.Latitude}/{location.Longitude}");
-
+            myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}/{location.Latitude}/{location.Longitude}");
+            if (myInfo.MyName.Length < 2)
+            {
+                EditProfile();
+            }
 
             //if (!string.IsNullOrEmpty(myInfo.MyName))
             //{
@@ -220,7 +225,7 @@
         {
             var eargs = new ExceptionArgs();
             eargs.MyGuid = myInfo.MyId;
-            eargs.Myexception = ex.Message;
+            eargs.Myexception =  ex.InnerException + ex.Message + ex.Source + ex.StackTrace;
             await Http.PostAsJsonAsync("Exception", eargs);
             throw;
         }

@@ -27,6 +27,8 @@ namespace BlazorApp2.Server.Controllers
         [HttpGet("{key}/{lat:double}/{lng:double}")]
         public async Task<IEnumerable<ClosestRuggers>> RuggersAsync(string key, double lat, double lng)
         {
+            key = key.Replace("%2f", "%2F").Replace("%2F", "/");
+
             var geo = SqlGeography.Point(lat, lng, 4326);
 
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))

@@ -1,5 +1,6 @@
 ﻿@using BlazorApp2.Shared
 @using AspNetMonsters.Blazor.Geolocation
+@using System.Web;
 @inject LocationService  LocationService
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
@@ -28,7 +29,7 @@
     {
 
         Key = await localStorage.GetItemAsync<string>("key");
-        teams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"teams/{Key}");
+        teams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"teams/{HttpUtility.UrlEncode(Key)}");
     }
     protected string DefaultIfNone(string img)
     {

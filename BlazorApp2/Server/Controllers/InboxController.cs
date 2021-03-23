@@ -25,6 +25,8 @@ namespace BlazorApp2.Server.Controllers
         [HttpGet("{key}")]
         public async Task<IEnumerable<InboxItem>> GetInboxAsync(string key)
         {
+            key = key.Replace("%2f", "%2F").Replace("%2F", "/");
+
             var sql = "Proc_GetInbox";
             using(var conn = new SqlConnection(_cstring.ConnectionString))
             {

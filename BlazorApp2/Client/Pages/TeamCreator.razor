@@ -1,4 +1,5 @@
 ﻿@using BlazorApp2.Shared
+@using System.Web;
 @page "/teamcreator"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -6,26 +7,26 @@
 
 <h3>Create a new Team</h3>
 
-    <EditForm Model="@teamModel" OnValidSubmit="@CreateTeamAsync">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <label for="name">Team Name</label>
-        <InputText class="form-control" id="name" @bind-Value="teamModel.TeamName" />
-        <label for="bio">Team Bio</label>
-        <InputTextArea class="form-control" id="bio" @bind-Value="teamModel.TeamBio" />
-        <label for="city">City</label>
-        <InputSelect class="form-control" id="city" @bind-Value="teamModel.City.CityId">
-            <option value="">Please Select A Home City For This Team</option>
-            @foreach (var c in cityInfos)
-                {
-                <option value="@c.CityId">@c.City</option>
-                }
-        </InputSelect>
-        <label for="teampic">Team Profile Picture</label>
-        <InputFile class="form-control" id="teampic" OnChange="@OnInputFileChange"></InputFile>
-        <img id="profilepic" src="@teamModel.TeamImageURI" />
-        <button class="button button-primary form-control" type="submit">Submit</button>
-    </EditForm>
+<EditForm Model="@teamModel" OnValidSubmit="@CreateTeamAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <label for="name">Team Name</label>
+    <InputText class="form-control" id="name" @bind-Value="teamModel.TeamName" />
+    <label for="bio">Team Bio</label>
+    <InputTextArea class="form-control" id="bio" @bind-Value="teamModel.TeamBio" />
+    <label for="city">City</label>
+    <InputSelect class="form-control" id="city" @bind-Value="teamModel.City.CityId">
+        <option value="">Please Select A Home City For This Team</option>
+        @foreach (var c in cityInfos)
+        {
+            <option value="@c.CityId">@c.City</option>
+        }
+    </InputSelect>
+    <label for="teampic">Team Profile Picture</label>
+    <InputFile class="form-control" id="teampic" OnChange="@OnInputFileChange"></InputFile>
+    <img id="profilepic" src="@teamModel.TeamImageURI" />
+    <button class="button button-primary form-control" type="submit">Submit</button>
+</EditForm>
 
 
 
@@ -42,9 +43,14 @@
     {
         Console.WriteLine("ONinit team create");
         Key = await localStorage.GetItemAsync<string>("key");
-        var test = await Http.GetStringAsync($"city/getcity/{Key}");
+        var test = await Http.GetStringAsync($"city/getcity/{HttpUtility.UrlEncode(Key)}");
         Console.WriteLine(test);
-        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"city/getcity/{Key}");
+        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"city/getcity/{HttpUtility.UrlEncode(Key)}");
+        var myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}");
+        if (myInfo.MyName.Length < 2)
+        {
+            NavigationManager.NavigateTo("/editrugger");
+        }
     }
     async Task CreateTeamAsync()
     {

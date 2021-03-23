@@ -1,5 +1,6 @@
-﻿
+﻿@using System.Web;
 @using BlazorApp2.Shared
+@using System.Web;
 @page "/teampicker"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -39,13 +40,13 @@
     protected override async Task OnInitializedAsync()
     {
         Key = await localStorage.GetItemAsync<string>("key");
-        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{Key}");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}");
         if (string.IsNullOrEmpty(myInfo.MyName))
         {
             /*They haven't filled out their profile yet, send them back to the front page*/
             NavigationManager.NavigateTo("/");
         }
-        ClosestTeams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"Teams/{Key}");
+        ClosestTeams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"Teams/{HttpUtility.UrlEncode(Key)}");
         buttondisabled = false;
     }
     async Task UpdateTeam()

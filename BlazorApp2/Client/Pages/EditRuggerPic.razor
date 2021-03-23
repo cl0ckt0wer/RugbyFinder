@@ -1,5 +1,6 @@
 ﻿@using AspNetMonsters.Blazor.Geolocation
 @using BlazorApp2.Shared
+@using System.Web;
 @inject LocationService  LocationService
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -19,7 +20,7 @@
     protected override async Task OnInitializedAsync()
     {
         Key = await localStorage.GetItemAsync<string>("key");
-        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{Key}");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}");
 
     }
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
@@ -28,7 +29,7 @@
         using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
         var buffer = new byte[stream.Length];
         await stream.ReadAsync(buffer);
-        var args = new RuggerPic() { Pic = buffer, RuggerKey = Key};
+        var args = new RuggerPic() { Pic = buffer, RuggerKey = Key };
         await Http.PostAsJsonAsync("RuggerPic", args);
         NavigationManager.NavigateTo("/");
     }

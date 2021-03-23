@@ -40,6 +40,8 @@ namespace BlazorApp2.Server.Controllers
         [HttpGet("[action]/{key}")]
         public async Task<IEnumerable<CityInfo>> GetCityAsync(string key)
         {
+            key = key.Replace("%2f", "%2F").Replace("%2F", "/");
+
             var sql = "Proc_GetClosestCitiesByRugger";
             using (var conn = new SqlConnection(_cstring.ConnectionString))
             {

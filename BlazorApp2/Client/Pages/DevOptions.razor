@@ -6,19 +6,21 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager MyNavigationManager
 
-
+<h4>@Key</h4>
 <div class="container">
     <button class="btn btn-primary" @onclick="MyThrowException">Throw Exception</button>
 </div>
+<div class="container">
+    <button class="btn btn-primary" @onclick="UnregisterKey">Delete Key</button>
+</div>
 
 @code {
-    public string MyGuid { get; set; } = "";
+    public string Key { get; set; }
 
     public async Task MyThrowException()
     {
         try
         {
-            MyGuid = await localStorage.GetItemAsync<string>("guid");
             throw new Exception();
         }
         catch (Exception ex)
@@ -27,12 +29,22 @@
             var ags = new ExceptionArgs()
             {
                 Myexception = ex.InnerException + ex.Message + ex.Source + ex.StackTrace,
-                MyGuid = Guid.Parse(MyGuid)
+                Key = Key
             };
-
-
             await Http.PostAsJsonAsync("Exception", ags);
             throw;
         }
     }
+
+    public async Task UnregisterKey()
+    {
+        await localStorage.SetItemAsync("key", "");
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        Key = await localStorage.GetItemAsync<string>("key");
+
+    }
+
+
 }
