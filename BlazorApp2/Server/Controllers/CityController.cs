@@ -21,10 +21,7 @@ namespace BlazorApp2.Server.Controllers
         {
             _cstring = new SqlConnectionStringBuilder(configuration.GetConnectionString("MessagingDatabase"));
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+     
         [HttpPost]
         [Obsolete("This method is obsolete. Use MyProfile instead.", false)]
         public async Task<CityInfo> PostCityAsync(CityInfoArgs args)
@@ -39,13 +36,14 @@ namespace BlazorApp2.Server.Controllers
             }
 
         }
-        [Route("{myguid:guid}")]
-        public async Task<IEnumerable<CityInfo>> GetCityAsync(Guid myguid)
+        [HttpGet("{key}")]
+        [HttpGet("[action]/{key}")]
+        public async Task<IEnumerable<CityInfo>> GetCityAsync(string key)
         {
             var sql = "Proc_GetClosestCitiesByRugger";
             using (var conn = new SqlConnection(_cstring.ConnectionString))
             {
-                var test = await conn.QueryAsync<CityInfo>(sql, param: new { myguid = myguid }, commandType: CommandType.StoredProcedure);
+                var test = await conn.QueryAsync<CityInfo>(sql, param: new { key }, commandType: CommandType.StoredProcedure);
                 return test;
             }
         }

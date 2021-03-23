@@ -34,7 +34,7 @@ namespace BlazorApp2.Server.Controllers
             var sql = "Proc_SetRuggerTeam";
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {
-                var x = await conn.ExecuteAsync(sql, new { RuggerId = args.RuggerId, TeamId = args.TeamId }, commandType: CommandType.StoredProcedure);
+                var x = await conn.ExecuteAsync(sql, new { Key = args.Key, TeamId = args.TeamId }, commandType: CommandType.StoredProcedure);
 
                 return Accepted();
             }

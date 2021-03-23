@@ -13,11 +13,10 @@
 <div class="container-fluid">
 
     <div class="alert alert-info" role="alert">
-        Welcome to the open Alpha of Ruckr! Find rugby players and teams near you. Don't see your team? Make it! Issues? <a href="mailto:admin@ruckr.fun">admin@ruckr.fun</a>
+        Welcome to the open Alpha of Ruckr! <bold>Find rugby players and teams near you.</bold> Don't see your team? Make it! Issues? <a href="mailto:admin@ruckr.fun">admin@ruckr.fun</a>
     </div>
     <div class="card">
         <div class="card-header">
-            @Key
             @myInfo.MyTeam.TeamBio
         </div>
         @if (!string.IsNullOrEmpty(myInfo.MyImageURI))
@@ -159,7 +158,7 @@
     {
 #if DEBUG
 
-        await Task.Delay(5000);
+        //await Task.Delay(5000);
 #endif
         try
         {

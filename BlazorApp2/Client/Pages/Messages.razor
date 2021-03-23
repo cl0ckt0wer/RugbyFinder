@@ -17,15 +17,19 @@
         </div>
     </div>
 }
+@if(!inbox.Any())
+            {
+                <h3>You have no messages :(</h3>
+            }
 
 
 @code {
-    string guidstring = string.Empty;
+    public string Key { get; set; }
     IEnumerable<InboxItem> inbox = new List<InboxItem>();
 
     protected override async Task OnInitializedAsync()
     {
-        guidstring = await localStorage.GetItemAsync<string>("guid");
+        Key = await localStorage.GetItemAsync<string>("key");
         //THOU SHALT NOT CALL A ROUTE INBOX
         //try
         //{
@@ -37,7 +41,7 @@
         //    var x = ex;
         //}
 
-        inbox = await Http.GetFromJsonAsync<IEnumerable<InboxItem>>($"ruggerinbox/{guidstring}");
+        inbox = await Http.GetFromJsonAsync<IEnumerable<InboxItem>>($"ruggerinbox/{Key}");
 
     }
 }

@@ -26,8 +26,8 @@ namespace BlazorApp2.Server.Controllers
         //{
         //    return View();
         //}
-        [HttpGet("{myguid:guid}")]
-        public async Task<IEnumerable<TeamModel>> TeamsAsync(Guid myguid)
+        [HttpGet("{key}")]
+        public async Task<IEnumerable<TeamModel>> TeamsAsync(string key)
         {
             var sql = "Proc_GetClosestTeamsByRugger";
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
@@ -38,7 +38,7 @@ namespace BlazorApp2.Server.Controllers
                          teamModel.City = cityInfo;
                          return teamModel;
                      }, splitOn: "CityId"
-                    , param: new { myguid }
+                    , param: new { key }
                     , commandType: CommandType.StoredProcedure);
                 return xx;
             }
@@ -54,7 +54,7 @@ namespace BlazorApp2.Server.Controllers
             dynamicParameters.Add("Name", model.TeamName);
             dynamicParameters.Add("Bio", model.TeamBio);
             dynamicParameters.Add("CityId", model.City.CityId);
-            dynamicParameters.Add("Owner", model.RuggerOwner);
+            dynamicParameters.Add("Owner", model.RuggerOwnerKey);
             dynamicParameters.Add("Teampic", model.TeamPic);
             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
             {

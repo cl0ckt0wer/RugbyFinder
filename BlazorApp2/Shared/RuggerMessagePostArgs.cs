@@ -8,7 +8,7 @@ namespace BlazorApp2.Shared
 {
     public class RuggerMessagePostArgs
     {
-        public Guid MyGuid { get; set; } = Guid.Empty;
+        public string MyKey { get; set; } = "";
         public Guid TheirGuid { get; set; } = Guid.Empty;
         public string Message { get; set; } = string.Empty;
     }

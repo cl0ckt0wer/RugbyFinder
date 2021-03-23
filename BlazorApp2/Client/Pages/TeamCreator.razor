@@ -23,7 +23,7 @@
         </InputSelect>
         <label for="teampic">Team Profile Picture</label>
         <InputFile class="form-control" id="teampic" OnChange="@OnInputFileChange"></InputFile>
-        <img id="profilepic" src="@imageDataUri" />
+        <img id="profilepic" src="@teamModel.TeamImageURI" />
         <button class="button button-primary form-control" type="submit">Submit</button>
     </EditForm>
 
@@ -31,36 +31,41 @@
 
 
 @code {
-    string guidstring = string.Empty;
+    public string Key { get; set; }
     TeamPostModel teamModel = new TeamPostModel();
     IEnumerable<CityInfo> cityInfos = new CityInfo[0];
     string format = "image/png";
-    string imageDataUri = "";
-   
+
+
 
     protected override async Task OnInitializedAsync()
     {
-        guidstring = await localStorage.GetItemAsync<string>("guid");
-        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
+        Console.WriteLine("ONinit team create");
+        Key = await localStorage.GetItemAsync<string>("key");
+        var test = await Http.GetStringAsync($"city/getcity/{Key}");
+        Console.WriteLine(test);
+        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"city/getcity/{Key}");
     }
     async Task CreateTeamAsync()
     {
         if (teamModel.City.CityId != 0)
         {
             teamModel.TeamId = Guid.NewGuid();
-            teamModel.RuggerOwner = Guid.Parse(guidstring);
-            await Http.PostAsJsonAsync("/teams", teamModel);
-            NavigationManager.NavigateTo("/teampicker");
+            teamModel.RuggerOwnerKey = Key;
+            await Http.PostAsJsonAsync($"/teams/", teamModel);
+            NavigationManager.NavigateTo("/");
         }
     }
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
 
         var browserFile = await e.File.RequestImageFileAsync(format, 300, 300);
-        using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
-        var buffer = new byte[stream.Length];
-        await stream.ReadAsync(buffer);
-        teamModel.TeamPic = buffer;
-        imageDataUri = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+        using (var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000))
+        {
+            var buffer = new byte[stream.Length];
+            await stream.ReadAsync(buffer);
+            teamModel.TeamPic = buffer;
+        }
+
     }
 }

@@ -16,6 +16,7 @@ AS
 	,COALESCE(N.Name, '') AS [MyName] 
 	,COALESCE(N.Bio, '') AS [MyBio]
 	,P.Pic AS ProfilePic
+	,(SELECT TOP 1 ID FROM DBO.Teams WHERE TeamOwner = @UID) AS TeamOwned
 	,T.Id AS TeamId
 	,T.TeamName
 	,T.TeamBio
@@ -25,6 +26,7 @@ AS
 	,C.admin_name
 	,C.city
 	,C.Coordinates.STDistance(l.Coordinate) AS Distance
+	
 	FROM dbo.RuggerName N
 	LEFT JOIN dbo.RuggerTeam RT ON RT.RuggerId = N.Id
 	LEFT JOIN dbo.Teams T ON T.Id = RT.TeamId

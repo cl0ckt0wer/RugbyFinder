@@ -1,6 +1,7 @@
 ﻿using BlazorApp2.Shared;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SqlServer.Types;
 using System;
@@ -17,15 +18,23 @@ namespace BlazorApp2.Server.Controllers
     public class MyProfileController : Controller
     {
         private SqlConnectionStringBuilder _cstring;
+        private IActionDescriptorCollectionProvider _actionDiscriptorCollectionProvider;
 
-        public MyProfileController(IConfiguration configuration)
+        public MyProfileController(IConfiguration configuration, IActionDescriptorCollectionProvider actionDescriptorCollectionProvider)
         {
             _cstring = new SqlConnectionStringBuilder(configuration.GetConnectionString("MessagingDatabase"));
+            _actionDiscriptorCollectionProvider = actionDescriptorCollectionProvider;
         }
         [HttpGet("{key}/{lat:double?}/{lng:double?}")]
-        public async Task<MyInfo> MyProfileAsync(string key, double lat, double lng)
+        public async Task<MyInfo> MyProfileAsync(string key, double? lat, double? lng)
         {
-            var geo = SqlGeography.Point(lat, lng, 4326);
+            var routes = _actionDiscriptorCollectionProvider.ActionDescriptors.Items.Select(x => new {
+                Action = x.RouteValues["Action"],
+                Controller = x.RouteValues["Controller"],
+                Name = x.AttributeRouteInfo.Name,
+                Template = x.AttributeRouteInfo.Template
+            }).ToList();
+
             using (var cnn = new SqlConnection(_cstring.ConnectionString))
             {
               
@@ -38,14 +47,18 @@ namespace BlazorApp2.Server.Controllers
                 }, splitOn: "TeamId, CityId", param: new { key }, commandType: CommandType.StoredProcedure);
                 var myinfo =  y.FirstOrDefault() ?? new MyInfo();
 
-
-                sql = "Proc_GetClosestCity";
-                myinfo.ClosestCity = await cnn.QueryFirstAsync<CityInfo>(sql, new { geo, key }
-                    , commandType: CommandType.StoredProcedure).ConfigureAwait(false);
+                if(lat != null && lng != null)
+                {
+                    var geo = SqlGeography.Point(lat.Value, lng.Value, 4326);
+                    sql = "Proc_GetClosestCity";
+                    myinfo.ClosestCity = await cnn.QueryFirstAsync<CityInfo>(sql, new { geo, key }
+                        , commandType: CommandType.StoredProcedure).ConfigureAwait(false);
+                   
+                }
                 return myinfo;
             }
         }
-        [HttpPut("[controller]/[action]")]
+        [HttpPut("[action]")]
         public async Task UpdateProfileAsync(UpdateRuggerArgs args)
         {
             using (var conn = new SqlConnection(_cstring.ConnectionString))

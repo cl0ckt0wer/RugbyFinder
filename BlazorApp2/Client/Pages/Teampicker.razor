@@ -16,7 +16,7 @@
         </label>
         <InputSelect id="selectteam" class="form-control" @bind-Value="selectedTeam">
             <option value="@Guid.Empty" selected>@PickATeam</option>
-            @foreach (var t in closestTeams)
+            @foreach (var t in ClosestTeams)
             {
                 <option value="@t.TeamId">@t.TeamName</option>
             }
@@ -30,29 +30,29 @@
 
 @code {
     MyInfo myInfo = new MyInfo();
-    string guidstring = string.Empty;
-    IEnumerable<TeamModel> closestTeams = new TeamModel[0];
+    public IEnumerable<TeamModel> ClosestTeams { get; set; } = new TeamModel[0];
     Guid selectedTeam = Guid.Empty;
     bool buttondisabled = true;
     public string PickATeam { get; set; } = "Pick a Team";
+    public string Key { get; set; } = "";
 
     protected override async Task OnInitializedAsync()
     {
-        guidstring = await localStorage.GetItemAsync<string>("guid");
-        myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guidstring}");
+        Key = await localStorage.GetItemAsync<string>("key");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{Key}");
         if (string.IsNullOrEmpty(myInfo.MyName))
         {
+            /*They haven't filled out their profile yet, send them back to the front page*/
             NavigationManager.NavigateTo("/");
         }
-        closestTeams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"Teams/{guidstring}");
+        ClosestTeams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"Teams/{Key}");
         buttondisabled = false;
     }
     async Task UpdateTeam()
     {
         if (selectedTeam != Guid.Empty)
         {
-            await Http.PostAsJsonAsync("/ruggerteam", new RuggerTeamArgs() { RuggerId = Guid.Parse(guidstring), TeamId = selectedTeam });
-
+            await Http.PostAsJsonAsync("/ruggerteam", new RuggerTeamArgs() { Key = Key, TeamId = selectedTeam });
         }
         NavigationManager.NavigateTo("/");
 

@@ -20,14 +20,14 @@
     </div>
 
     <div class="row">
-        <EditForm class="form-inline" Model="@Messagetosend" OnValidSubmit="@HandleSendMessage">
+    
 
             <div class="form-group mb-2">
                 <label for="message" class="sr-only">Type a message:</label>
-                <InputText placeholder="Type here..." class="form-control form-control-plaintext border-bottom" id="message" @bind-Value="Messagetosend" />
+                <input placeholder="Type here..." class="form-control form-control-plaintext border-bottom" id="message" @bind="Messagetosend" />
             </div>
-            <button class="btn btn-primary mb-2" type="submit">Send</button>
-        </EditForm>
+            <button class="btn btn-primary mb-2" @onclick="@HandleSendMessage">Send</button>
+      
     </div>
     <div class="row">
         <ul class="list-group">
@@ -41,33 +41,28 @@
 @code {
         [Parameter]
         public Guid Id { get; set; }
-    private string guidstring = string.Empty;
+    public string Key { get; set; }
     public IEnumerable<RuggerMessageModel> messModel = new RuggerMessageModel[0];
     public string Messagetosend { get; set; } = string.Empty;
     public ProfileInfo ruggerInfo { get; set; } = new ProfileInfo();
     protected override async Task OnInitializedAsync()
     {
         //get pending messages
-        guidstring = await localStorage.GetItemAsync<string>("guid");
-        if (string.IsNullOrEmpty(guidstring))
-        {
-            NavigationManager.NavigateTo("/");
-        }
-        var rmargs = new RuggerMessagePostArgs();
-        rmargs.TheirGuid = Id;
-        rmargs.MyGuid = Guid.Parse(guidstring);
+        Key = await localStorage.GetItemAsync<string>("key");
+       
+  
 
-        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{guidstring}/{Id}");
+        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{Key}/{Id}");
         ruggerInfo = await Http.GetFromJsonAsync<ProfileInfo>($"profile/{Id}");
     }
     protected async Task HandleSendMessage()
     {
         var a = new RuggerMessagePostArgs();
-        a.MyGuid = Guid.Parse(guidstring);
+        a.MyKey = Key;
         a.TheirGuid = Id;
         a.Message = Messagetosend;
         await Http.PostAsJsonAsync("/ruggermessage", a);
-        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{guidstring}/{Id}");
+        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{Key}/{Id}");
         Messagetosend = string.Empty;
     }
     protected async Task SendIfEnter(KeyboardEventArgs args)
@@ -80,7 +75,7 @@
     }
     protected string GetColor(Guid guid)
     {
-        if (guidstring == guid.ToString())
+        if (Id != guid)
         {
             return "list-group-item-light float-right";
         }
@@ -91,7 +86,7 @@
     }
     protected string Floatside(Guid guid)
     {
-        if (guidstring == guid.ToString())
+        if (Id != guid)
         {
             return "float-right";
         }

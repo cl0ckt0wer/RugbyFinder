@@ -6,27 +6,27 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @page "/editmyteam"
 <h3>Edit My Team</h3>
-<EditForm Model="@tm" OnValidSubmit="@UpdateTeamAsync">
+<EditForm Model="@Team" OnValidSubmit="@UpdateTeamAsync">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="form-group">
         <label for="teamname">Edit your Team Name</label>
-        <InputText class="form-control" id="teamname" @bind-Value="@tm.TeamName" />
+        <InputText class="form-control" id="teamname" @bind-Value="@Team.TeamName" />
     </div>
     <div class="form-group">
         <label for="teambio">
             Edit your teams bio
         </label>
-        <InputTextArea class="form-control" id="teambio" @bind-Value="@tm.TeamBio"></InputTextArea>
+        <InputTextArea class="form-control" id="teambio" @bind-Value="@Team.TeamBio"></InputTextArea>
 
     </div>
     <div class="form-group">
         <label for="teamcity">Change Team City</label>
-        <InputSelect class="form-control" id="teamcity" @bind-Value="tm.City.CityId">
-            <option value="@tm.City.CityId">@tm.City.City</option>
+        <InputSelect class="form-control" id="teamcity" @bind-Value="Team.City.CityId">
+            <option value="@Team.City.CityId">@Team.City.City</option>
             @foreach (var c in cityInfos)
             {
-                @if (tm.City.CityId != c.CityId)
+                @if (Team.City.CityId != c.CityId)
                 {
                     <option value="@c.CityId">@c.City</option>
                 }
@@ -36,32 +36,36 @@
     <div class="form-group">
         <label for="teampic">Team Profile Picture</label>
         <InputFile class="form-control" id="teampic" OnChange="@TeamPicChange"></InputFile>
-        <img id="profilepic" src="@tm.TeamImageURI" />
+        <img id="profilepic" src="@Team.TeamImageURI" />
     </div>
     <button class="btn btn-primary" type="submit">Submit</button>
 </EditForm>
-    }
+    
 @code {
-    string guidstring = string.Empty;
+
+    public string Key { get; set; }
     MyInfo myInfo = new MyInfo();
-    TeamPostModel tm = new TeamPostModel();
+    public TeamModel Team { get; set; } = new TeamModel();
     IEnumerable<CityInfo> cityInfos = new CityInfo[0];
     string format = "image/png";
 
     protected override async Task OnInitializedAsync()
     {
-        guidstring = await localStorage.GetItemAsync<string>("guid");
-        myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guidstring}");
-        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
-
+        Key = await localStorage.GetItemAsync<string>("key");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{Key}");
+        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{Key}");
+        Console.WriteLine("does this cast work");
+        Team = await Http.GetFromJsonAsync<TeamModel>($"TeamProfile/{myInfo.TeamOwned}");
+        Console.WriteLine("cAST COMPLETE");
+      
     }
     private async Task UpdateTeamAsync()
     {
-        if (!string.IsNullOrEmpty(tm.TeamName))
+        if (!string.IsNullOrEmpty(Team.TeamName))
         {
-            var args = (TeamPostModel)tm;
-            args.RuggerOwner = Guid.Parse(guidstring);
-            await Http.PostAsJsonAsync("/teams", args);
+            var x = new TeamPostModel(Team);
+            x.RuggerOwnerKey = Key;
+            await Http.PostAsJsonAsync("/teams", Team);
         }
     }
     private async void TeamPicChange(InputFileChangeEventArgs e)
@@ -70,7 +74,7 @@
         using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
         var buffer = new byte[stream.Length];
         await stream.ReadAsync(buffer);
-        tm.TeamPic = buffer;
-        var x = (tm.TeamImageURI == $"data:{format};base64,{Convert.ToBase64String(buffer)}");
+        Team.TeamPic = buffer;
+        await UpdateTeamAsync();
     }
 }

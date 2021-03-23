@@ -8,7 +8,7 @@ namespace BlazorApp2.Shared
 {
     public class RuggerTeamArgs
     {
-        public Guid RuggerId { get; set; } = Guid.Empty;
+        public string Key { get; set; } = "";
         public Guid TeamId { get; set; } = Guid.Empty;
     }
 }

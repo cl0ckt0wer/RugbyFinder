@@ -20,13 +20,13 @@ namespace BlazorApp2.Server.Controllers
         {
             _cstring = new SqlConnectionStringBuilder(configuration.GetConnectionString("MessagingDatabase"));
         }
-        [HttpGet("{myid:guid}/{theirid:guid}")]
-        public async Task<IEnumerable<RuggerMessageModel>> GetRuggerMessageAsync(Guid myid, Guid theirid)
+        [HttpGet("{key}/{theirid:guid}")]
+        public async Task<IEnumerable<RuggerMessageModel>> GetRuggerMessageAsync(string key, Guid theirid)
         {
             var sql = "Proc_GetRuggerMessage";
             using (var conn = new SqlConnection(_cstring.ConnectionString))
             {
-                var result = await conn.QueryAsync<RuggerMessageModel>(sql, new { myid, theirid }, commandType: System.Data.CommandType.StoredProcedure);
+                var result = await conn.QueryAsync<RuggerMessageModel>(sql, new { key, theirid }, commandType: System.Data.CommandType.StoredProcedure);
                 return result;
             }
                 
@@ -36,12 +36,12 @@ namespace BlazorApp2.Server.Controllers
         {
             if (args.Message.Length > 2000)
             {
-                args.Message = args.Message.Substring(0, 2000);
+                args.Message = args.Message.Substring(0, 2000) + "MESSAGE TRUNCATED (MAX LENGTH 2000 CHARACTERS)";
             }
             var sql = "Proc_InsertRuggerMessage";
             using (var conn = new SqlConnection(_cstring.ConnectionString))
             {
-                await conn.ExecuteAsync(sql, new { From = args.MyGuid, To = args.TheirGuid, Message = args.Message }, commandType: System.Data.CommandType.StoredProcedure);
+                await conn.ExecuteAsync(sql, new { Key = args.MyKey, To = args.TheirGuid, Message = args.Message }, commandType: System.Data.CommandType.StoredProcedure);
             }
             return Accepted();
         }

@@ -44,15 +44,14 @@ namespace BlazorApp2.Server.Controllers
             }
         }
         [HttpPost]
-        [Obsolete]
         public async Task NameAsync(UpdateRuggerArgs args)
         {
-            throw new NotImplementedException();
-            //using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
-            //{
-            //    var sql = "Proc_UpsertName";
-            //    await conn.ExecuteAsync(sql, new { Id = args.MyGuid, name = args.MyName, bio = args.Bio }, commandType: CommandType.StoredProcedure);
-            //}
+            //throw new NotImplementedException();
+            using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
+            {
+                var sql = "Proc_UpsertName";
+                await conn.ExecuteAsync(sql, new { Key = args.Key, name = args.MyName, bio = args.Bio }, commandType: CommandType.StoredProcedure);
+            }
         }
     }
 }

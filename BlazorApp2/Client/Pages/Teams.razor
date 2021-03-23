@@ -22,13 +22,13 @@
 @functions
  {
     public IEnumerable<TeamModel> teams { get; set; } = new TeamModel[0];
+    public string Key { get; set; }
 
-    string guidstring = string.Empty;
     protected override async Task OnInitializedAsync()
     {
 
-        var guidstring = await localStorage.GetItemAsync<string>("guid");
-        teams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"teams/{guidstring}");
+        Key = await localStorage.GetItemAsync<string>("key");
+        teams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"teams/{Key}");
     }
     protected string DefaultIfNone(string img)
     {
