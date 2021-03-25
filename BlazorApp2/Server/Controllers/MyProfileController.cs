@@ -63,6 +63,7 @@ namespace BlazorApp2.Server.Controllers
                         , commandType: CommandType.StoredProcedure).ConfigureAwait(false);
                    
                 }
+                _logger.LogInformation($"Name:{myinfo.MyName}, {myinfo.ClosestCity?.City},{myinfo.ClosestCity?.Admin_name},{myinfo.ClosestCity?.Country}, {myinfo.MyTeam?.TeamName}, {myinfo.TeamOwned}, ");
                 return myinfo;
             }
         }
