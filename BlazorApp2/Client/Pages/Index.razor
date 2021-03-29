@@ -21,10 +21,15 @@
         <div class="card-header">
             @myInfo.MyTeam.TeamBio
         </div>
-        @if (!string.IsNullOrEmpty(myInfo.MyImageURI))
+        @if(myInfo.VideoFile.Length > 0)
+        {
+        <video src="/videos/@myInfo.VideoFile" class="card-img-top" type="video/webm" controls></video>
+        }
+        else if (!string.IsNullOrEmpty(myInfo.MyImageURI))
         {
             <img id="profilepic" src="@myInfo.MyImageURI" class="card-img-top" />
         }
+
         <div class="card-body">
 
             @if (string.IsNullOrEmpty(myInfo.MyName))
@@ -46,36 +51,6 @@
         </ul>
     </div>
 
-    @*<h1>Your Profile</h1>@if (string.IsNullOrEmpty(myInfo.MyName))
-        {
-            <h2>Please enter a name</h2>
-        }
-        else
-        {
-            <h2>@myInfo.MyName </h2>
-        }
-        <p class="alert-primary">
-            @myInfo.MyTeam.TeamBio
-        </p>
-        <img id="profilepic" src="@imageDataUri" class="img-thumbnail float-right" />
-        <p>
-            Your Bio: @myInfo.MyBio
-        </p>
-        <h3>You are here</h3>
-        <div class="container">
-            Lat: @location?.Latitude <br />
-            Long: @location?.Longitude <br />
-            Accuracy: @location?.Accuracy <br />
-
-        </div>
-        <h3>Your city info</h3>
-        <div class="container">
-            Country: @closestCity?.Country <br />
-            State: @closestCity?.Admin_name <br />
-            City: @closestCity?.City <br />
-            My Team: @myInfo.MyTeam.TeamName <br />
-
-        </div>*@
 </div>
 
 <div class="container-fluid">
@@ -140,18 +115,9 @@
 @functions
 {
     Location location = new Location();
-    //CityInfo closestCity = new CityInfo();
-    //Guid guid = Guid.Empty;
-    //string guidstring = string.Empty;
-    //IndexModel indexModel = new IndexModel() { MyBio = string.Empty, MyName = string.Empty };
-    //TeamModel teamModel = new TeamModel();
     MyInfo myInfo = new MyInfo();
     bool debug = true;
-    //string imageDataUri = "";
     string format = "image/png";
-    //bool teambuttondisabled = true;
-    //TeamPostModel tm = new TeamPostModel();
-    //IEnumerable<CityInfo> cityInfos = new CityInfo[0];
     public string UpdateAvailable { get; set; } = "d-none";
     public string Test1 { get; set; } = "";
     public string Key { get; set; } = "";
@@ -175,46 +141,14 @@
                 Console.WriteLine(ret.Key);
             }
             location = await LocationService.GetLocationAsync();
-            //guidstring = await localStorage.GetItemAsync<string>("guid");
-            //if (string.IsNullOrEmpty(guidstring))
-            //{
-            //    guid = Guid.NewGuid();
-            //    await localStorage.SetItemAsync("guid", guid.ToString());
-            //    guidstring = guid.ToString();
-            //}
-            //else
-            //{
-            //    if (!Guid.TryParse(guidstring, out guid))
-            //    {
-            //        guid = Guid.NewGuid();
-            //        await localStorage.SetItemAsync("guid", guid.ToString());
-            //        guidstring = guid.ToString();
-            //    }
-            //}
-            //var args = new MyProfileArgs();
-            //args.Lat = (double)location.Latitude;
-            //args.Long = (double)location.Longitude;
-            //args.Key = Key;
 
-            //var response = await Http.PostAsJsonAsync("City", args);
-            //myInfo = await Http.GetFromJsonAsync<MyInfo>($"Name/{guid}");
             myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}/{location.Latitude}/{location.Longitude}");
             if (myInfo.MyName.Length < 2)
             {
                 EditProfile();
             }
 
-            //if (!string.IsNullOrEmpty(myInfo.MyName))
-            //{
-            //    teambuttondisabled = false;
-            //}
-            //closestCity = await response.Content.ReadFromJsonAsync<CityInfo>();
-            //if (myInfo.ProfilePic != null && myInfo.ProfilePic.Length > 0)
-            //{
-            //    imageDataUri = $"data:{format};base64,{Convert.ToBase64String(myInfo.ProfilePic)}";
-            //}
-            //tm = await Http.GetFromJsonAsync<TeamPostModel>($"teamowner/{guid}");
-            //cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{guidstring}");
+
             var iua = await JS.InvokeAsync<bool>("CheckWaitingServiceWorker");
             if (iua)
             {
@@ -233,51 +167,35 @@
 
 
     }
-    private async Task UpdateNameAsync()
-    {
-        if (!string.IsNullOrEmpty(myInfo.MyName))
-        {
-            var args = new UpdateRuggerArgs();
-            args.MyName = myInfo.MyName;
-            args.Key = Key;
-            args.Bio = myInfo.MyBio;
-            await Http.PostAsJsonAsync("MyProfile/UpdateProfile", args);
-        }
-    }
-    //private async Task UpdateTeamAsync()
+    //private async Task UpdateNameAsync()
     //{
-    //    if (!string.IsNullOrEmpty(tm.TeamName))
+    //    if (!string.IsNullOrEmpty(myInfo.MyName))
     //    {
-    //        var args = (TeamPostModel)tm;
-    //        args.RuggerOwner = guid;
-    //        await Http.PostAsJsonAsync("/teams", args);
+    //        var args = new UpdateRuggerArgs();
+    //        args.MyName = myInfo.MyName;
+    //        args.Key = Key;
+    //        args.Bio = myInfo.MyBio;
+    //        await Http.PostAsJsonAsync("MyProfile/UpdateProfile", args);
     //    }
     //}
-    private async Task OnInputFileChange(InputFileChangeEventArgs e)
-    {
 
-        var browserFile = await e.File.RequestImageFileAsync(format, 300, 300);
-        using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
-        var buffer = new byte[stream.Length];
-        await stream.ReadAsync(buffer);
-        var args = new RuggerPic() { Pic = buffer, RuggerKey = Key };
-        await Http.PostAsJsonAsync("RuggerPic", args);
-        myInfo.ProfilePic = buffer;
-        //imageDataUri = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
-    }
-    private void PickATeam()
-    {
-        NavigationManager.NavigateTo("/teampicker");
-    }
-    //private async void TeamPicChange(InputFileChangeEventArgs e)
+    //private async Task OnInputFileChange(InputFileChangeEventArgs e)
     //{
+
     //    var browserFile = await e.File.RequestImageFileAsync(format, 300, 300);
     //    using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
     //    var buffer = new byte[stream.Length];
     //    await stream.ReadAsync(buffer);
-    //    tm.TeamPic = buffer;
-    //    var x = (tm.TeamImageURI == $"data:{format};base64,{Convert.ToBase64String(buffer)}");
+    //    var args = new RuggerPic() { Pic = buffer, RuggerKey = Key };
+    //    await Http.PostAsJsonAsync("RuggerPic", args);
+    //    myInfo.ProfilePic = buffer;
+
     //}
+    private void PickATeam()
+    {
+        NavigationManager.NavigateTo("/teampicker");
+    }
+
     private void EditProfile()
     {
         NavigationManager.NavigateTo("/editrugger");

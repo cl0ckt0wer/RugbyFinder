@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.Security.Authentication;
+using Xabe.FFmpeg.Downloader;
 
 namespace BlazorApp2.Server
 {
@@ -8,6 +9,7 @@ namespace BlazorApp2.Server
     {
         public static void Main(string[] args)
         {
+            //FFmpegDownloader.GetLatestVersion(FFmpegVersion.Full);
             CreateHostBuilder(args).Build().Run();
         }
 

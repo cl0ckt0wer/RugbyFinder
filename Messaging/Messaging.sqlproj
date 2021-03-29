@@ -111,6 +111,8 @@
     <Build Include="dbo\Tables\Exceptions.sql" />
     <Build Include="dbo\Stored Procedures\Proc_RegisterNewKey.sql" />
     <Build Include="dbo\Tables\KeyGuid.sql" />
+    <Build Include="dbo\Tables\RuggerVideo.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_UpsertRuggerVideo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Messaging.publish.xml" />

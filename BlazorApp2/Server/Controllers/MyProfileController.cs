@@ -34,7 +34,7 @@ namespace BlazorApp2.Server.Controllers
         public async Task<MyInfo> MyProfileAsync(string key, double? lat, double? lng)
         {
             key = key.Replace("%2f", "%2F").Replace("%2F", "/");
-            //key = HttpUtility.UrlDecode(key);
+            //in case i need to read out my registered routes:
             //var routes = _actionDiscriptorCollectionProvider.ActionDescriptors.Items.Select(x => new {
             //    Action = x.RouteValues["Action"],
             //    Controller = x.RouteValues["Controller"],

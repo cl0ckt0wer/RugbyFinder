@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[RuggerVideo]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+	[FileName] VARCHAR(255) NOT NULL
+
+)

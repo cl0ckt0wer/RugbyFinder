@@ -338,3 +338,8 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/BlazorApp2/Server/Development/unsafe_uploads
+/BlazorApp2/Server/wwwroot/videos
+/BlazorApp2/Server/ffprobe.exe
+/BlazorApp2/Server/ffplay.exe
+/BlazorApp2/Server/ffmpeg.exe

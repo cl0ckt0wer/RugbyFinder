@@ -22,5 +22,6 @@ namespace BlazorApp2.Shared
         }
         public CityInfo ClosestCity { get; set; }
         public Guid TeamOwned { get; set; } = Guid.Empty;
+        public string VideoFile { get; set; } = "";
     }
 }

@@ -1,10 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[Proc_GetMyInfo]
 	@key varchar(64)
-	--@Name NVARCHAR(50) OUT,
-	--@Bio NVARCHAR(MAX) OUT,
-	--@TeamName nvarchar(200) OUT,
-	--@TeamId UNIQUEIDENTIFIER OUT,
-	--@ProfilePic VARBINARY(MAX) OUT
 AS
 	SET NOCOUNT ON;
 	DECLARE @UID UNIQUEIDENTIFIER;
@@ -17,6 +12,7 @@ AS
 	,COALESCE(N.Bio, '') AS [MyBio]
 	,P.Pic AS ProfilePic
 	,(SELECT TOP 1 ID FROM DBO.Teams WHERE TeamOwner = @UID) AS TeamOwned
+	,V.[FileName] as VideoFile
 	,T.Id AS TeamId
 	,T.TeamName
 	,T.TeamBio
@@ -34,6 +30,7 @@ AS
 	LEFT JOIN dbo.Cities C on C.id = T.TeamCityId
 	LEFT JOIN dbo.TeamPic TP ON TP.Id = T.Id
 	LEFT JOIN dbo.RuggerLocation L ON l.Id = n.Id
+	LEFT JOIN dbo.RuggerVideo V ON V.Id = N.Id
 	WHERE N.ID = @Uid
 
 	

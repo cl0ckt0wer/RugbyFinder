@@ -20,5 +20,6 @@ namespace BlazorApp2.Shared
                 return string.Empty;
             }
         }
+        public string VideoFile { get; set; } = "";
     }
 }
