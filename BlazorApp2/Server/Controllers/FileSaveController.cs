@@ -92,19 +92,22 @@ namespace BlazorApp2.Server.Controllers
                             string output = Path.Combine(Environment.CurrentDirectory, @"wwwroot\videos", Path.ChangeExtension(Path.GetFileName(temppath), "webm"));
                             Directory.CreateDirectory(Path.GetDirectoryName(output));
                             logger.LogInformation($"output path: {output}");
-                            IStream videoStream = mediaInfo.VideoStreams.FirstOrDefault()?.SetSize(VideoSize.Hd480)?.SetCodec(VideoCodec.vp9);
+                            
+                            IStream videoStream = mediaInfo.VideoStreams.FirstOrDefault()?.SetCodec(VideoCodec.vp9);
                             IStream audioStream = mediaInfo.AudioStreams.FirstOrDefault()?.SetCodec(AudioCodec.libvorbis);
                             logger.LogInformation($"video codec: {videoStream.Codec}");
 
-
-                            var result = await FFmpeg.Conversions.New().AddStream(videoStream, audioStream).SetOutput(output)
-                                /*only use hardware acceleration in prod, i think it acutally takes longer. */
-                                //TODO:configuration file for hardware acceleration
+                            var result = FFmpeg.Conversions.New().AddStream(videoStream, audioStream).SetOutput(output).AddParameter("-vf scale=720:-1");
+                            /*only use hardware acceleration in prod, i think it acutally takes longer. */
+                            //TODO:configuration file for hardware acceleration
 #if !DEBUG
-                                .UseHardwareAcceleration(HardwareAccelerator.auto, Enum.Parse<VideoCodec>(videoStream.Codec), VideoCodec.vp9)
+                             //result = result.UseHardwareAcceleration(HardwareAccelerator.auto, Enum.Parse<VideoCodec>(videoStream.Codec), VideoCodec.vp9);
 #endif
-                                .Start();
-                            logger.LogInformation($"Transcode duration: {result.Duration}");
+                            logger.LogInformation($"{result.Build()}");
+                            var end = await result.Start();
+
+                            logger.LogInformation($"Transcode duration: {end.Duration}");
+                            logger.LogInformation($"args: {end.Arguments}");
                             var sql = "Proc_UpsertRuggerVideo";
                             using (var conn = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
                             {
