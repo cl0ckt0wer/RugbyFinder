@@ -13,7 +13,7 @@
     <div class="card" style="width: 18rem;">
         @if (p.VideoFile.Length > 1)
         {
-            <video src="/videos/@p.VideoFile" class="card-img-top" type="video/webm" controls muted autoplay poster="@DefaultIfNone(p.ImageURI)"></video>
+            <video src="/videos/@p.VideoFile" class="card-img-top" type="video/webm" autoplay loop muted playsinline poster="@DefaultIfNone(p.ImageURI)"></video>
         }
         else
         {

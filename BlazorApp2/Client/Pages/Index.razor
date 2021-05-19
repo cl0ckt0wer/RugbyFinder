@@ -23,7 +23,7 @@
         </div>
         @if(myInfo.VideoFile.Length > 0)
         {
-        <video src="/videos/@myInfo.VideoFile" class="card-img-top" type="video/webm" controls></video>
+        <video src="/videos/@myInfo.VideoFile" class="card-img-top" type="video/webm" controls loop muted playsinline></video>
         }
         else if (!string.IsNullOrEmpty(myInfo.MyImageURI))
         {
@@ -118,7 +118,7 @@
     MyInfo myInfo = new MyInfo();
     bool debug = true;
     string format = "image/png";
-    public string UpdateAvailable { get; set; } = "d-none";
+    public string UpdateAvailable { get; set; } = ""; // "d-none";
     public string Test1 { get; set; } = "";
     public string Key { get; set; } = "";
 
