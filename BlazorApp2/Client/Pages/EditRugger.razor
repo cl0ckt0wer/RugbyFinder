@@ -32,6 +32,16 @@
     {
         Key = await localStorage.GetItemAsync<string>("key");
         myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}");
+        if (myInfo.MyName.Length < 2)
+        {
+            var r = new Random();
+            var args = new UpdateRuggerArgs();
+            args.MyName = $"Banana{r.Next(1,9999999)}";
+            args.Key = Key;
+            args.Bio = myInfo.MyBio;
+            await Http.PostAsJsonAsync("Name", args);
+            NavigationManager.NavigateTo("/");
+        }
     }
     private async Task UpdateNameAsync()
     {
