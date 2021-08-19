@@ -78,7 +78,22 @@ window['AspNetMonsters']['Blazor']['Geolocation']['GetLocation'] = function (req
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
             dispatchResponse(requestId, position.coords);
-        });
+        },
+
+            //
+            // pass error callback function to return a value to Blazor when something goes wrong
+            //
+            function (positionError) {
+                dispatchResponse(requestId, {
+                    latitude: 0,
+                    longitude: 0,
+                    altitude: 0,
+                    accuracy: 0,
+                    altitudeAccuracy: 0,
+                    heading: 0,
+                    speed: 0
+                });
+            });
     }
     else {
         return "No location finding";
