@@ -140,8 +140,18 @@
                 Key = ret.Key;
                 Console.WriteLine(ret.Key);
             }
-            location = await LocationService.GetLocationAsync();
+            try
+            {
+                Console.WriteLine($"gETTING LOCATION");
+                location = await LocationService.GetLocationAsync().ConfigureAwait(false);
+            }
+            catch
+            {
+                Console.WriteLine($"Error in location service");
+            }
 
+
+            Console.WriteLine($"Location Accuracy{location.Accuracy}");
             myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}/{location.Latitude}/{location.Longitude}");
             if (myInfo.MyName.Length < 2)
             {
