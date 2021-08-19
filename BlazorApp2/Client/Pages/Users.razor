@@ -11,14 +11,10 @@
 {
 
     <div class="card" style="width: 18rem;">
-        @if (p.VideoFile.Length > 1)
-        {
-            <video src="/videos/@p.VideoFile" class="card-img-top" type="video/webm" autoplay loop muted playsinline poster="@DefaultIfNone(p.ImageURI)"></video>
-        }
-        else
-        {
+       
+       
             <img src="@DefaultIfNone(p.ImageURI)" class="card-img-top" alt="...">
-        }
+       
 
         <div class="card-body">
             <h5 class="card-title">@p.Name</h5>
