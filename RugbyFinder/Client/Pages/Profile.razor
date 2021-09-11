@@ -1,0 +1,66 @@
+﻿@using AspNetMonsters.Blazor.Geolocation
+@using RugbyFinder.Shared
+@inject LocationService  LocationService
+@inject HttpClient Http
+
+@page "/profile/{id:guid}"
+
+
+
+
+<div class="jumbotron">
+    <img src="@DefaultIfNone(pi.ImageURI)">
+
+    <h1 class="display-4">@pi.Name</h1>
+    <p class="lead">@pi.City</p>
+    <hr class="my-4">
+    <p>@pi.Bio</p>
+    <ul class="list-group">
+        <li class="list-group-item">
+            Near @pi.City
+        </li>
+        <li class="list-group-item">
+            @pi.DaysSinceLastLogin days since last login.
+        </li>
+        <li class="list-group-item">
+            @pi.DaysSinceCreate days since created
+        </li>
+        <li class="list-group-item">
+            @if (string.IsNullOrEmpty(@pi.TeamName))
+            {
+                <div>No Team Set</div>
+            }
+            else
+            {
+                <a href="/teamprofile/@pi.MyTeamId">
+                    Plays For @pi.TeamName
+                </a>
+            }
+        </li>
+        <li class="list-group-item"><a href="/messagerugger/@Id">Message</a></li>
+    </ul>
+</div>
+
+@code {
+    ProfileInfo pi = new ProfileInfo() { DaysSinceCreate = 0, DaysSinceLastLogin = 0, City = string.Empty, Bio = string.Empty, Name = string.Empty };
+
+
+    [Parameter]
+    public Guid Id { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        pi = await Http.GetFromJsonAsync<ProfileInfo>($"Profile/{Id}");
+
+    }
+    protected string DefaultIfNone(string img)
+    {
+        if (string.IsNullOrEmpty(img))
+        {
+            return "/pics/person.svg";
+        }
+        else
+        {
+            return img;
+        }
+    }
+}

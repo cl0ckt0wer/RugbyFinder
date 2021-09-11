@@ -1,0 +1,81 @@
+﻿@using AspNetMonsters.Blazor.Geolocation
+@using RugbyFinder.Shared
+@using System.Web;
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@page "/editmyteam"
+<h3>Edit My Team</h3>
+<EditForm Model="@Team" OnValidSubmit="@UpdateTeamAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="teamname">Edit your Team Name</label>
+        <InputText class="form-control" id="teamname" @bind-Value="@Team.TeamName" />
+    </div>
+    <div class="form-group">
+        <label for="teambio">
+            Edit your teams bio
+        </label>
+        <InputTextArea class="form-control" id="teambio" @bind-Value="@Team.TeamBio"></InputTextArea>
+
+    </div>
+    <div class="form-group">
+        <label for="teamcity">Change Team City</label>
+        <InputSelect class="form-control" id="teamcity" @bind-Value="Team.City.CityId">
+            <option value="@Team.City.CityId">@Team.City.City</option>
+            @foreach (var c in cityInfos)
+            {
+                @if (Team.City.CityId != c.CityId)
+                {
+                    <option value="@c.CityId">@c.City</option>
+                }
+            }
+        </InputSelect>
+    </div>
+    <div class="form-group">
+        <label for="teampic">Team Profile Picture</label>
+        <InputFile class="form-control" id="teampic" OnChange="@TeamPicChange"></InputFile>
+        <img id="profilepic" src="@Team.TeamImageURI" />
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+</EditForm>
+    
+@code {
+
+    public string Key { get; set; }
+    MyInfo myInfo = new MyInfo();
+    public TeamModel Team { get; set; } = new TeamModel();
+    IEnumerable<CityInfo> cityInfos = new CityInfo[0];
+    string format = "image/png";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Key = await localStorage.GetItemAsync<string>("key");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}");
+        cityInfos = await Http.GetFromJsonAsync<IEnumerable<CityInfo>>($"City/{HttpUtility.UrlEncode(Key)}");
+        Console.WriteLine("does this cast work");
+        Team = await Http.GetFromJsonAsync<TeamModel>($"TeamProfile/{myInfo.TeamOwned}");
+        Console.WriteLine("cAST COMPLETE");
+      
+    }
+    private async Task UpdateTeamAsync()
+    {
+        if (!string.IsNullOrEmpty(Team.TeamName))
+        {
+            var x = new TeamPostModel(Team);
+            x.RuggerOwnerKey = Key;
+            await Http.PostAsJsonAsync("/teams", Team);
+        }
+    }
+    private async void TeamPicChange(InputFileChangeEventArgs e)
+    {
+        var browserFile = await e.File.RequestImageFileAsync(format, 300, 300);
+        using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
+        var buffer = new byte[stream.Length];
+        await stream.ReadAsync(buffer);
+        Team.TeamPic = buffer;
+        await UpdateTeamAsync();
+    }
+}

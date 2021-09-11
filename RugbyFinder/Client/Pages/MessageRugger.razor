@@ -1,0 +1,100 @@
+﻿@using AspNetMonsters.Blazor.Geolocation
+@using RugbyFinder.Shared
+@using System.Web;
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavigationManager
+
+
+
+@page "/messagerugger/{id:guid}"
+
+<div class="container-fluid">
+    <div class="row">
+        <h3>Message @ruggerInfo.Name</h3>
+    </div>
+    <div class="row">
+
+        <img id="profilepic" src="@ruggerInfo.ImageURI" class="img-fluid float-right" />
+
+    </div>
+
+    <div class="row">
+
+
+        <div class="form-group mb-2">
+            <label for="message" class="sr-only">Type a message:</label>
+            <input placeholder="Type here..." class="form-control form-control-plaintext border-bottom" id="message" @bind="Messagetosend" />
+        </div>
+        <button class="btn btn-primary mb-2" @onclick="@HandleSendMessage">Send</button>
+
+    </div>
+    <div class="row">
+        <ul class="list-group">
+            @foreach (var m in messModel)
+            {
+                <li class="list-group-item @GetColor(m.From)"><div class="@Floatside(m.From)">@m.Message</div></li>
+            }
+        </ul>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    public string Key { get; set; }
+    public IEnumerable<RuggerMessageModel> messModel = new RuggerMessageModel[0];
+    public string Messagetosend { get; set; } = string.Empty;
+    public ProfileInfo ruggerInfo { get; set; } = new ProfileInfo();
+    protected override async Task OnInitializedAsync()
+    {
+        //get pending messages
+        Key = await localStorage.GetItemAsync<string>("key");
+
+
+
+        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{HttpUtility.UrlEncode(Key)}/{Id}");
+        ruggerInfo = await Http.GetFromJsonAsync<ProfileInfo>($"profile/{Id}");
+    }
+    protected async Task HandleSendMessage()
+    {
+        var a = new RuggerMessagePostArgs();
+        a.MyKey = Key;
+        a.TheirGuid = Id;
+        a.Message = Messagetosend;
+        await Http.PostAsJsonAsync("/ruggermessage", a);
+        messModel = await Http.GetFromJsonAsync<IEnumerable<RuggerMessageModel>>($"ruggermessage/{HttpUtility.UrlEncode(Key)}/{Id}");
+        Messagetosend = string.Empty;
+    }
+    protected async Task SendIfEnter(KeyboardEventArgs args)
+    {
+
+        if (args.Key == "Enter")
+        {
+            await HandleSendMessage();
+        }
+    }
+    protected string GetColor(Guid guid)
+    {
+        if (Id != guid)
+        {
+            return "list-group-item-light float-right";
+        }
+        else
+        {
+            return "list-group-item-dark";
+        }
+    }
+    protected string Floatside(Guid guid)
+    {
+        if (Id != guid)
+        {
+            return "float-right";
+        }
+        else
+        {
+            return "float-left";
+        }
+    }
+
+}

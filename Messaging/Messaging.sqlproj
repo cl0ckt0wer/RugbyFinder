@@ -6,27 +6,84 @@
     <Name>Messaging</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
-    <ProjectGuid>{0ed7a522-f160-4265-8259-a7d07c457ab1}</ProjectGuid>
+    <ProjectGuid>{3d009ca3-cdcb-4b7d-bb84-551511d5e880}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql150DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
     <RootNamespace>Messaging</RootNamespace>
     <AssemblyName>Messaging</AssemblyName>
-    <ModelCollation>1033, CI</ModelCollation>
+    <ModelCollation>1033,CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetLanguage>CS</TargetLanguage>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <QueryStoreCaptureMode>All</QueryStoreCaptureMode>
+    <QueryStoreDesiredState>Off</QueryStoreDesiredState>
+    <QueryStoreFlushInterval>900</QueryStoreFlushInterval>
+    <QueryStoreStatsInterval>60</QueryStoreStatsInterval>
+    <QueryStoreMaxPlansPerQuery>200</QueryStoreMaxPlansPerQuery>
+    <QueryStoreStaleQueryThreshold>367</QueryStoreStaleQueryThreshold>
+    <QueryStoreMaxStorageSize>100</QueryStoreMaxStorageSize>
+    <DbScopedConfigLegacyCardinalityEstimation>Off</DbScopedConfigLegacyCardinalityEstimation>
+    <DbScopedConfigMaxDOP>0</DbScopedConfigMaxDOP>
+    <DbScopedConfigParameterSniffing>On</DbScopedConfigParameterSniffing>
+    <DbScopedConfigOptimizerHotfixes>On</DbScopedConfigOptimizerHotfixes>
+    <DelayedDurability>DISABLED</DelayedDurability>
+    <AutoCreateStatisticsIncremental>False</AutoCreateStatisticsIncremental>
+    <MemoryOptimizedElevateToSnapshot>False</MemoryOptimizedElevateToSnapshot>
+    <Containment>None</Containment>
+    <IsNestedTriggersOn>True</IsNestedTriggersOn>
+    <IsTransformNoiseWordsOn>False</IsTransformNoiseWordsOn>
+    <TwoDigitYearCutoff>2049</TwoDigitYearCutoff>
+    <NonTransactedFileStreamAccess>OFF</NonTransactedFileStreamAccess>
+    <TargetRecoveryTimePeriod>0</TargetRecoveryTimePeriod>
+    <TargetRecoveryTimeUnit>SECONDS</TargetRecoveryTimeUnit>
+    <DefaultFileStreamFilegroup>FS1</DefaultFileStreamFilegroup>
+    <IsChangeTrackingOn>False</IsChangeTrackingOn>
+    <IsChangeTrackingAutoCleanupOn>True</IsChangeTrackingAutoCleanupOn>
+    <ChangeTrackingRetentionPeriod>2</ChangeTrackingRetentionPeriod>
+    <ChangeTrackingRetentionUnit>Days</ChangeTrackingRetentionUnit>
+    <IsEncryptionOn>False</IsEncryptionOn>
+    <IsBrokerPriorityHonored>False</IsBrokerPriorityHonored>
+    <Trustworthy>False</Trustworthy>
     <AutoUpdateStatisticsAsynchronously>True</AutoUpdateStatisticsAsynchronously>
     <PageVerify>CHECKSUM</PageVerify>
-    <Recovery>SIMPLE</Recovery>
+    <ServiceBrokerOption>DisableBroker</ServiceBrokerOption>
+    <DateCorrelationOptimizationOn>False</DateCorrelationOptimizationOn>
+    <Parameterization>SIMPLE</Parameterization>
     <AllowSnapshotIsolation>True</AllowSnapshotIsolation>
-    <DbScopedConfigOptimizerHotfixes>On</DbScopedConfigOptimizerHotfixes>
+    <ReadCommittedSnapshot>False</ReadCommittedSnapshot>
+    <VardecimalStorageFormatOn>True</VardecimalStorageFormatOn>
+    <SupplementalLoggingOn>False</SupplementalLoggingOn>
+    <CompatibilityMode>150</CompatibilityMode>
+    <AnsiNullDefault>True</AnsiNullDefault>
+    <AnsiNulls>True</AnsiNulls>
+    <AnsiPadding>True</AnsiPadding>
+    <AnsiWarnings>True</AnsiWarnings>
+    <ArithAbort>True</ArithAbort>
+    <ConcatNullYieldsNull>True</ConcatNullYieldsNull>
+    <QuotedIdentifier>True</QuotedIdentifier>
+    <NumericRoundAbort>False</NumericRoundAbort>
+    <RecursiveTriggersEnabled>False</RecursiveTriggersEnabled>
+    <DatabaseChaining>False</DatabaseChaining>
+    <DatabaseState>ONLINE</DatabaseState>
+    <CloseCursorOnCommitEnabled>False</CloseCursorOnCommitEnabled>
+    <DefaultCursor>LOCAL</DefaultCursor>
+    <AutoClose>False</AutoClose>
+    <AutoCreateStatistics>True</AutoCreateStatistics>
+    <AutoShrink>False</AutoShrink>
+    <AutoUpdateStatistics>True</AutoUpdateStatistics>
+    <TornPageDetection>False</TornPageDetection>
+    <DatabaseAccess>MULTI_USER</DatabaseAccess>
+    <Recovery>SIMPLE</Recovery>
+    <EnableFullTextSearch>True</EnableFullTextSearch>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -50,7 +107,7 @@
     <DefineTrace>true</DefineTrace>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RunSqlCodeAnalysis>True</RunSqlCodeAnalysis>
+    <DataRetentionEnabled>False</DataRetentionEnabled>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
@@ -64,60 +121,45 @@
     <Folder Include="Properties" />
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
-    <Folder Include="dbo\Stored Procedures\" />
-    <Folder Include="dbo\Functions\" />
     <Folder Include="Storage\" />
+    <Folder Include="dbo\Functions\" />
+    <Folder Include="dbo\Stored Procedures\" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="dbo\Tables\worldcities.sql" />
-    <Build Include="dbo\Tables\Cities.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetClosestCity.sql" />
-    <Build Include="dbo\Tables\RuggerLocation.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_UpsertRuggerLocation.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetClosestRuggers.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetMyInfo.sql" />
-    <Build Include="dbo\Tables\Teams.sql" />
-    <Build Include="dbo\Tables\RuggerTeam.sql" />
-    <Build Include="dbo\Functions\sfn_GetClosestCityId.sql" />
-    <Build Include="Storage\FS1.sql" />
-    <Build Include="dbo\Tables\worldcities.sql" />
-    <Build Include="dbo\Tables\Teams.sql" />
-    <Build Include="dbo\Tables\TeamPic.sql" />
-    <Build Include="dbo\Tables\RuggerTeam.sql" />
-    <Build Include="dbo\Tables\RuggerPic.sql" />
-    <Build Include="dbo\Tables\RuggerName.sql" />
-    <Build Include="dbo\Tables\RuggerLocation.sql" />
-    <Build Include="dbo\Tables\Cities.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_UpsertTeam.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_UpsertRuggerPic.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_UpsertRuggerLocation.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_UpsertName.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_SetRuggerTeam.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetTeamByOwner.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetProfileInfo.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetMyInfo.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetClosestTeamsByRugger.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetClosestRuggers.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetClosestCity.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetClosestCitiesByRugger.sql" />
-    <Build Include="dbo\Stored Procedures\GetTeamInfo.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetTeamProfileInfo.sql" />
-    <Build Include="dbo\Tables\Messages.sql" />
-    <Build Include="Storage\MO1.sql" />
-    <Build Include="dbo\Stored Procedures\Get_TeamProfileInfo.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetInbox.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_GetRuggerMessage.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_InsertRuggerMessage.sql" />
-    <Build Include="dbo\Tables\Exceptions.sql" />
-    <Build Include="dbo\Stored Procedures\Proc_RegisterNewKey.sql" />
     <Build Include="dbo\Tables\KeyGuid.sql" />
     <Build Include="dbo\Tables\RuggerVideo.sql" />
+    <Build Include="dbo\Tables\Cities.sql" />
+    <Build Include="dbo\Tables\Messages.sql" />
+    <Build Include="dbo\Tables\RuggerLocation.sql" />
+    <Build Include="dbo\Tables\RuggerName.sql" />
+    <Build Include="dbo\Tables\RuggerPic.sql" />
+    <Build Include="dbo\Tables\RuggerTeam.sql" />
+    <Build Include="dbo\Tables\TeamPic.sql" />
+    <Build Include="dbo\Tables\Teams.sql" />
+    <Build Include="dbo\Tables\worldcities.sql" />
+    <Build Include="dbo\Tables\Exceptions.sql" />
+    <Build Include="Storage\FS1.sql" />
+    <Build Include="Storage\MO1.sql" />
+    <Build Include="dbo\Functions\sfn_GetClosestCityId.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_RegisterNewKey.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetRuggerMessage.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_InsertRuggerMessage.sql" />
     <Build Include="dbo\Stored Procedures\Proc_UpsertRuggerVideo.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Messaging.publish.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <RefactorLog Include="Messaging.refactorlog" />
+    <Build Include="dbo\Stored Procedures\Get_TeamProfileInfo.sql" />
+    <Build Include="dbo\Stored Procedures\GetTeamInfo.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetClosestCitiesByRugger.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetClosestRuggers.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetClosestTeamsByRugger.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetInbox.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetMyInfo.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetProfileInfo.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetTeamByOwner.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetTeamProfileInfo.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_SetRuggerTeam.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_UpsertName.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_UpsertRuggerLocation.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_UpsertRuggerPic.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_UpsertTeam.sql" />
+    <Build Include="dbo\Stored Procedures\Proc_GetClosestCity.sql" />
   </ItemGroup>
 </Project>
