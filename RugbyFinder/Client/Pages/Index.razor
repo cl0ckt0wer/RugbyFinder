@@ -144,18 +144,14 @@
                 Key = ret.Key;
                 Console.WriteLine(ret.Key);
             }
-<<<<<<< HEAD:BlazorApp2/Client/Pages/Index.razor
+
 
             location = await LocationService.GetLocationAsync().ConfigureAwait(false);
 
 
 
             Console.WriteLine($"Location Accuracy{location.Accuracy}");
-=======
-            location = await LocationService.GetLocationAsync();
-            var test1 = await Http.GetStringAsync($"MyProfile/{HttpUtility.UrlEncode(Key)}/{location.Latitude}/{location.Longitude}");
-            Console.WriteLine(test1);
->>>>>>> switchtonet6:RugbyFinder/Client/Pages/Index.razor
+
             myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}/{location.Latitude}/{location.Longitude}");
             //if (myInfo.MyName.Length < 2)
             //{
