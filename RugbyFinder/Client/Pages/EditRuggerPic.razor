@@ -1,0 +1,36 @@
+﻿@using AspNetMonsters.Blazor.Geolocation
+@using RugbyFinder.Shared
+@using System.Web;
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@page "/editruggerpic"
+<h3>Edit Your Picture</h3>
+<img id="profilepic" src="@myInfo.MyImageURI" class="img-thumbnail float-right" />
+<div class="form-group">
+    <NavLink href="/upload-files">Upload a profile video</NavLink><br />
+    <label for="selectpic">Select a Profile Picture</label>
+    <InputFile class="form-control-file" id="selectpic" OnChange="@OnInputFileChange" />
+</div>
+@code {
+    string format = "image/png";
+    public string Key { get; set; }
+    MyInfo myInfo = new MyInfo();
+    protected override async Task OnInitializedAsync()
+    {
+        Key = await localStorage.GetItemAsync<string>("key");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}");
+
+    }
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        var browserFile = await e.File.RequestImageFileAsync(format, 300, 300);
+        using var stream = browserFile.OpenReadStream(maxAllowedSize: 8000000);
+        var buffer = new byte[stream.Length];
+        await stream.ReadAsync(buffer);
+        var args = new RuggerPic() { Pic = buffer, RuggerKey = Key };
+        await Http.PostAsJsonAsync("RuggerPic", args);
+        NavigationManager.NavigateTo("/");
+    }
+}

@@ -4,4 +4,3 @@ AS
 	INSERT dbo.KeyGuid (Id, [Key])
 	OUTPUT inserted.Id AS MyGuid, inserted.[Key]
 	VALUES (NEWID(), @apikey)
-

@@ -1,0 +1,55 @@
+﻿@page "/users"
+@using RugbyFinder.Shared
+@using AspNetMonsters.Blazor.Geolocation
+@using System.Web;
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+<h3>Players</h3>
+
+@foreach (var p in ruggers)
+{
+
+    <div class="card" style="width: 18rem;">
+       
+       
+            <img src="@DefaultIfNone(p.ImageURI)" class="card-img-top" alt="...">
+       
+
+        <div class="card-body">
+            <h5 class="card-title">@p.Name</h5>
+            <p class="card-text">@p.Bio</p>
+            <a href="/Profile/@p.guid" class="btn btn-primary">Profile</a>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    private ClosestRuggers[] ruggers = new ClosestRuggers[0];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var location = await LocationService.GetLocationAsync();
+        var key = await localStorage.GetItemAsync<string>("key");
+
+
+        ruggers = (await Http.GetFromJsonAsync<IEnumerable<ClosestRuggers>>($"Ruggers/{HttpUtility.UrlEncode(key)}/{location.Latitude}/{location.Longitude}"))
+            .ToArray();
+        //ruggers = (await response.Content.ReadFromJsonAsync<IEnumerable<ClosestRuggers>>()).ToArray();
+
+    }
+    protected string DefaultIfNone(string img)
+    {
+        if (string.IsNullOrEmpty(img))
+        {
+            return "/pics/person.svg";
+        }
+        else
+        {
+            return img;
+        }
+    }
+
+}

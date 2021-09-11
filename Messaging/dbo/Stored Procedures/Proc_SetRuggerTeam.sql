@@ -7,10 +7,10 @@ AS
 	FROM KeyGuid
 	WHERE [Key] = @Key;
 
-	DELETE dbo.RuggerTeam
+	DELETE DBO.RuggerTeam
 	WHERE RuggerId = @RuggerId;
 
-	INSERT dbo.RuggerTeam (TeamId, RuggerId)
+	INSERT DBO.RuggerTeam (TeamId, RuggerId)
 	VALUES (@TeamId, @RuggerId)
 
 RETURN 1

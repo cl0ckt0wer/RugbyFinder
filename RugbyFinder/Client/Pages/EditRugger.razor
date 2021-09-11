@@ -1,0 +1,78 @@
+﻿@using AspNetMonsters.Blazor.Geolocation
+@using RugbyFinder.Shared
+@using System.Web;
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@page "/editrugger"
+<h3>Edit your Profile</h3>
+<EditForm Model="@myInfo" OnValidSubmit="@UpdateNameAsync">
+
+    <DataAnnotationsValidator />
+    <CustomValidator @ref="customValidator" />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="name">Change your name (Must be at least 2 characters long)</label>
+        <InputText class="form-control" id="name" @bind-Value="@myInfo.MyName" />
+    </div>
+    <div class="form-group">
+        <label for="bio">Change your bio</label>
+        <InputTextArea class="form-control" id="bio" @bind-Value="@myInfo.MyBio" />
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+
+</EditForm>
+@code { public string Key { get; set; } = "";
+    MyInfo myInfo = new MyInfo();
+    private CustomValidator customValidator;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var test = await localStorage.GetItemAsync<string>("key");
+        if (test is null)
+        {
+            test = "";
+        }
+        Key = test;
+        var test2 =  await Http.GetStringAsync($"MyProfile/{HttpUtility.UrlEncode(Key)}");
+      
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}");
+        if (myInfo.MyName.Length < 2)
+        {
+            var r = new Random();
+            var args = new UpdateRuggerArgs();
+            args.MyName = $"Banana{r.Next(1,9999999)}";
+            args.Key = Key;
+            args.Bio = myInfo.MyBio;
+            await Http.PostAsJsonAsync("Name", args);
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private async Task UpdateNameAsync()
+    {
+        customValidator.ClearErrors();
+        var errors = new Dictionary<string, List<string>>();
+        if (myInfo.MyName.Length < 2)
+        {
+            errors.Add(nameof(myInfo.MyName),
+           new List<string>() { "name must be at least 2 characters" });
+        }
+        if (errors.Count() > 0)
+        {
+            customValidator.DisplayErrors(errors);
+        }
+        else
+        {
+            var args = new UpdateRuggerArgs();
+            args.MyName = myInfo.MyName;
+            args.Key = Key;
+            args.Bio = myInfo.MyBio;
+            await Http.PostAsJsonAsync("Name", args);
+            NavigationManager.NavigateTo("/");
+        }
+
+
+    }
+}

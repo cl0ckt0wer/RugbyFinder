@@ -1,0 +1,61 @@
+﻿@using System.Web;
+@using RugbyFinder.Shared
+@using System.Web;
+@page "/teampicker"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+
+<div class="container">
+    <h3>Pick a Team</h3>
+    <EditForm Model="@selectedTeam" OnValidSubmit="@UpdateTeam">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <label for="selectteam">
+            Select Your Team:
+        </label>
+        <InputSelect id="selectteam" class="form-control" @bind-Value="selectedTeam">
+            <option value="@Guid.Empty" selected>@PickATeam</option>
+            @foreach (var t in ClosestTeams)
+            {
+                <option value="@t.TeamId">@t.TeamName</option>
+            }
+        </InputSelect>
+
+        <button disabled="@buttondisabled" class="btn btn-primary" type="submit">Submit</button>
+
+    </EditForm>
+</div>
+
+
+@code {
+    MyInfo myInfo = new MyInfo();
+    public IEnumerable<TeamModel> ClosestTeams { get; set; } = new TeamModel[0];
+    Guid selectedTeam = Guid.Empty;
+    bool buttondisabled = true;
+    public string PickATeam { get; set; } = "Pick a Team";
+    public string Key { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Key = await localStorage.GetItemAsync<string>("key");
+        myInfo = await Http.GetFromJsonAsync<MyInfo>($"MyProfile/{HttpUtility.UrlEncode(Key)}");
+        if (string.IsNullOrEmpty(myInfo.MyName))
+        {
+            /*They haven't filled out their profile yet, send them back to the front page*/
+            NavigationManager.NavigateTo("/");
+        }
+        ClosestTeams = await Http.GetFromJsonAsync<IEnumerable<TeamModel>>($"Teams/{HttpUtility.UrlEncode(Key)}");
+        buttondisabled = false;
+    }
+    async Task UpdateTeam()
+    {
+        if (selectedTeam != Guid.Empty)
+        {
+            await Http.PostAsJsonAsync("/ruggerteam", new RuggerTeamArgs() { Key = Key, TeamId = selectedTeam });
+        }
+        NavigationManager.NavigateTo("/");
+
+    }
+}

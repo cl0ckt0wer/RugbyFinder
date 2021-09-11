@@ -1,8 +1,13 @@
-﻿CREATE TABLE [dbo].[Exceptions]
-(
-	[Id] BIGINT IDENTITY PRIMARY KEY,
-	[SourceGuid] UNIQUEIDENTIFIER NOT NULL,
-	[ExString] NVARCHAR(MAX),
-	[InsertDate] DATETIME2 NOT NULL DEFAULT(SYSDATETIME())
-	INDEX IX_SourceGuid (SourceGuid)
-)
+﻿CREATE TABLE [dbo].[Exceptions] (
+    [Id]         BIGINT           IDENTITY (1, 1) NOT NULL,
+    [SourceGuid] UNIQUEIDENTIFIER NOT NULL,
+    [ExString]   NVARCHAR (MAX)   NULL,
+    [InsertDate] DATETIME2 (7)    DEFAULT (sysdatetime()) NOT NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_SourceGuid]
+    ON [dbo].[Exceptions]([SourceGuid] ASC);
+

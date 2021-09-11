@@ -1,6 +1,6 @@
-﻿CREATE TABLE [dbo].[RuggerVideo]
-(
-	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
-	[FileName] VARCHAR(255) NOT NULL
+﻿CREATE TABLE [dbo].[RuggerVideo] (
+    [Id]       UNIQUEIDENTIFIER NOT NULL,
+    [FileName] VARCHAR (255)    NOT NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
 
-)

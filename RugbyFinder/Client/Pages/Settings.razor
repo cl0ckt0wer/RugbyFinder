@@ -1,0 +1,39 @@
+﻿@using AspNetMonsters.Blazor.Geolocation
+@using RugbyFinder.Shared
+@inject LocationService  LocationService
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@page "/settings"
+  
+        <div class="container-fluid">
+            <h3>Settings</h3>
+            <p>Please save your key somewhere, since clearing your browser settings will kick you out of your account.</p>
+            <p>@Key</p>
+        </div>
+        <div class="container-fluid">
+            <div class="form-group">
+                <label for="keytextarea">Key:</label>
+                <textarea class="form-control" id="keytextarea" @bind="Key" rows="3"></textarea>
+                <small id="keyHelpBlock" class="form-text text-muted">
+                    In case you were wondering, it is case sensitive.
+                </small>
+            </div>
+            <button class="btn btn-primary" @onclick="UpdateKey">Change key</button>
+        </div>
+   
+
+
+    @code {
+        public string Key { get; set; }
+        protected override async Task OnInitializedAsync()
+        {
+
+            Key = await localStorage.GetItemAsync<string>("key");
+        }
+        protected async Task UpdateKey()
+        {
+            await localStorage.SetItemAsync("key", Key);
+
+        }
+    }
